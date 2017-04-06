@@ -16,7 +16,7 @@ import com.fly.common.web.util.SessionUtils;
 import com.fly.model.User;
 
 /**
- * @author 作者 fly
+ * @author 作者 fly //weixin
  * @version 创建时间：2015年11月18日 下午2:11:42 类说明
  */
 @Controller
@@ -26,7 +26,7 @@ public class HomeController {
 	public ModelAndView homeIndex(HttpServletRequest request) {
 		ModelAndView modelAndView = null;
 		User user = (User) request.getSession().getAttribute(Const.SESSION_USER);
-		 
+
 		if(user != null ) {
 			modelAndView = (ModelAndView) request.getAttribute("modelAndView");
 			modelAndView.setViewName("/index");
@@ -39,9 +39,9 @@ public class HomeController {
 
 	@RequestMapping(value="/home/detail/{id}", method = {RequestMethod.GET})
 	public ModelAndView getDetail(@PathVariable(value="id") Integer id){
-	    ModelAndView modelAndView = new ModelAndView();  
-	    modelAndView.addObject("id", id);  
-	    modelAndView.setViewName("/home/detail");  
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.addObject("id", id);
+	    modelAndView.setViewName("/home/detail");
 	    return modelAndView;
 	}
 
