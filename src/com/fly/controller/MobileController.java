@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * 
+ *
  * @author fly
  * @version 创建时间：2017年4月6日 类说明
  *
@@ -18,19 +18,19 @@ import org.springframework.web.servlet.ModelAndView;
 public class MobileController {
 
 	/**
-	 * 二维码扫描
+	 * 二维码扫描 跳转到指定app(微信、支付宝)
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value="/mobile/saomiao",  method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView getDetail(HttpServletRequest request){
-	    ModelAndView modelAndView = new ModelAndView();  
-	    
+	    ModelAndView modelAndView = new ModelAndView();
+
 	    String agent = request.getHeader("User-Agent").toLowerCase();
 	    int way = 0;
-	    
+
 	    modelAndView.addObject("agent", agent);
-	    modelAndView.setViewName("/chongzhi");  
+	    modelAndView.setViewName("/chongzhi");
 	    return modelAndView;
 	}
 }
