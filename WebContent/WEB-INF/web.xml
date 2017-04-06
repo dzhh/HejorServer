@@ -22,7 +22,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<!-- -->
+	<!-- 登录验证 先取消
 
 	<filter>
 		<filter-name>loginFilter</filter-name>
@@ -40,6 +40,7 @@
 		<filter-name>loginFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
+	-->
 	<!-- 执行时间过滤器 -->
 	<filter>
 		<filter-name>processTime</filter-name>
