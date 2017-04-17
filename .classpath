@@ -58,5 +58,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spring-webmvc-portlet-4.0.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spring-websocket-4.0.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/netty-all-4.1.9.Final-sources.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/netty-all-4.1.9.Final.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/NuttyServer.jar" sourcepath="/NuttyServer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
