@@ -85,6 +85,12 @@
 	</listener>
 
 
+	<servlet>
+	     <servlet-name>NettyServerServlet</servlet-name>
+	     <servlet-class>com.fly.netty.server.NettyServerServlet</servlet-class>
+	      <load-on-startup>150</load-on-startup>
+   	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.html</url-pattern>
