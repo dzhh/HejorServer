@@ -88,7 +88,11 @@
 	<servlet>
 	     <servlet-name>NettyServerServlet</servlet-name>
 	     <servlet-class>com.fly.netty.server.NettyServerServlet</servlet-class>
-	      <load-on-startup>150</load-on-startup>
+		      <init-param>
+			   <param-name>port</param-name>
+			   <param-value>10080</param-value>
+			 </init-param>
+	     <load-on-startup>150</load-on-startup>
    	</servlet>
 
 	<servlet-mapping>
