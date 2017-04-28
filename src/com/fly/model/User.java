@@ -1,74 +1,103 @@
 package com.fly.model;
 
 public class User {
-	
-	private String userId;
+    private String userid;
 
-    public String getUserId() {
-        return userId;
-    }
+    private String origin;
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    private String nickname;
+
     private Integer balance;
 
-    public Integer getBalance() {
-		return balance;
-	}
+    private Byte sex;
 
-	public void setBalance(Integer balance) {
-		this.balance = balance;
-	}
-	
-	
-	private String phone;
+    private String phone;
 
-    public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	
     private Integer zmxy;
 
-	public Integer getZmxy() {
-		return zmxy;
-	}
+    private Integer ischange;
 
-	public void setZmxy(Integer zmxy) {
-		this.zmxy = zmxy;
-	}
-	
-	private boolean isChange;
-	
-	public boolean isChange() {
-		return isChange;
-	}
+    private String password;
 
-	public void setChange(boolean isChange) {
-		this.isChange = isChange;
-	}
+    private String headimgurl;
 
-	private String password;
+    public String getUserid() {
+        return userid;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUserid(String userid) {
+        this.userid = userid == null ? null : userid.trim();
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	private String headimgurl;
+    public String getOrigin() {
+        return origin;
+    }
 
-	public String getHeadimgurl() {
-		return headimgurl;
-	}
+    public void setOrigin(String origin) {
+        this.origin = origin == null ? null : origin.trim();
+    }
 
-	public void setHeadimgurl(String headimgurl) {
-		this.headimgurl = headimgurl;
-	}
-	
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname == null ? null : nickname.trim();
+    }
+
+    public Integer getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Integer balance) {
+        this.balance = balance;
+    }
+
+    public Byte getSex() {
+        return sex;
+    }
+
+    public void setSex(Byte sex) {
+        this.sex = sex;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    public Integer getZmxy() {
+        return zmxy;
+    }
+
+    public void setZmxy(Integer zmxy) {
+        this.zmxy = zmxy;
+    }
+
+    public Integer getIschange() {
+        return ischange;
+    }
+
+    public void setIschange(Integer ischange) {
+        this.ischange = ischange;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
+    }
+
+    public String getHeadimgurl() {
+        return headimgurl;
+    }
+
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl == null ? null : headimgurl.trim();
+    }
 }

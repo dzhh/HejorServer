@@ -35,14 +35,14 @@ public class CmsUtils {
 	 * @param request
 	 * @return
 	 */
-	public static String getUserId(HttpServletRequest request) {
-		User user = getUser(request);
-		if (user != null) {
-			return user.getUserId();
-		} else {
-			return null;
-		}
-	}
+//	public static String getUserId(HttpServletRequest request) {
+//		User user = getUser(request);
+//		if (user != null) {
+//			return user.getUserId();
+//		} else {
+//			return null;
+//		}
+//	}
 
 	/**
 	 * 设置用户

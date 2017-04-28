@@ -26,27 +26,27 @@ public class AdminController {
 	    return modelAndView;
 	}
 	
-	@RequestMapping(value = "/admin/login", produces = { "text/javascript;charset=UTF-8" })
-	public ModelAndView submitUser(HttpServletRequest request, User user){
-		ModelAndView modelAndView = new ModelAndView();
-		String name = user.getUserId();
-		String pwd = user.getPassword();
-		modelAndView.addObject("name", name);
-		modelAndView.addObject("pwd", pwd);
-		modelAndView.setViewName("admin/login");
-	    return modelAndView;
-	}
-	
-	
-	@RequestMapping(value = "/admin/admin", produces = { "text/javascript;charset=UTF-8" })
-	public ModelAndView admin(HttpServletRequest request, User user){
-		ModelAndView modelAndView = new ModelAndView();
-		String a = request.getParameter("username");
-		String name = user.getUserId();
-		String pwd = user.getPassword();
-		modelAndView.addObject("name", name);
-		modelAndView.addObject("pwd", pwd);
-		modelAndView.setViewName("admin/admin");
-	    return modelAndView;
-	}
+//	@RequestMapping(value = "/admin/login", produces = { "text/javascript;charset=UTF-8" })
+//	public ModelAndView submitUser(HttpServletRequest request, User user){
+//		ModelAndView modelAndView = new ModelAndView();
+//		String name = user.getUserId();
+//		String pwd = user.getPassword();
+//		modelAndView.addObject("name", name);
+//		modelAndView.addObject("pwd", pwd);
+//		modelAndView.setViewName("admin/login");
+//	    return modelAndView;
+//	}
+//	
+//	
+//	@RequestMapping(value = "/admin/admin", produces = { "text/javascript;charset=UTF-8" })
+//	public ModelAndView admin(HttpServletRequest request, User user){
+//		ModelAndView modelAndView = new ModelAndView();
+//		String a = request.getParameter("username");
+//		String name = user.getUserId();
+//		String pwd = user.getPassword();
+//		modelAndView.addObject("name", name);
+//		modelAndView.addObject("pwd", pwd);
+//		modelAndView.setViewName("admin/admin");
+//	    return modelAndView;
+//	}
 }

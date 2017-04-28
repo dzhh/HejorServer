@@ -13,6 +13,6 @@ public class NettySendMsg {
 	public static void sendMsg(Channel channel, NettyMessage nettyMessage) {
         channel.writeAndFlush(JsonUtil.beanToJson(nettyMessage));
         
-      //如何记录发送状态
+        //如何记录发送状态
 	}
 }

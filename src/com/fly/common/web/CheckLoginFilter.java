@@ -90,16 +90,16 @@ public class CheckLoginFilter implements Filter {
         	return;
         }
         
-        if (user.getUserId()!=null && user.getPassword()!=null) {
-        	//统一处理  将需要常用的变量放入到ModelAndView
-        	CmsUtils.setUser(request, user);
-        	ModelAndView modelAndView = new ModelAndView();
-        	modelAndView.addObject("user", user);
-        	request.setAttribute("modelAndView", modelAndView);
-        	
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
+//        if (user.getUserId()!=null && user.getPassword()!=null) {
+//        	//统一处理  将需要常用的变量放入到ModelAndView
+//        	CmsUtils.setUser(request, user);
+//        	ModelAndView modelAndView = new ModelAndView();
+//        	modelAndView.addObject("user", user);
+//        	request.setAttribute("modelAndView", modelAndView);
+//        	
+//            filterChain.doFilter(servletRequest, servletResponse);
+//            return;
+//        }
     }
 
     
