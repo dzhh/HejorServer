@@ -12,24 +12,21 @@ import com.fly.model.User;
  */
 public interface UserService {
 	
-	int deleteByPrimaryKey(Integer userId);
+	int deleteByPrimaryKey(String userId);
 
     int insertSelective(User record);
 
-    User selectByPrimaryKey(Integer userId);
+    User selectByPrimaryKey(String userId);
 
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
 	
-	User find(Integer userId);
-	
-	User selectByUserName(String username);
-	
+	User find(String userId);
+		
 	List<User> findAll();
 	
 	int insert(User record);
 
 	List<User> selectUserList(User user);
-
 }

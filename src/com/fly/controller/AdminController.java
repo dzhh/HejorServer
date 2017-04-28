@@ -29,7 +29,7 @@ public class AdminController {
 	@RequestMapping(value = "/admin/login", produces = { "text/javascript;charset=UTF-8" })
 	public ModelAndView submitUser(HttpServletRequest request, User user){
 		ModelAndView modelAndView = new ModelAndView();
-		String name = user.getUsername();
+		String name = user.getUserId();
 		String pwd = user.getPassword();
 		modelAndView.addObject("name", name);
 		modelAndView.addObject("pwd", pwd);
@@ -42,7 +42,7 @@ public class AdminController {
 	public ModelAndView admin(HttpServletRequest request, User user){
 		ModelAndView modelAndView = new ModelAndView();
 		String a = request.getParameter("username");
-		String name = user.getUsername();
+		String name = user.getUserId();
 		String pwd = user.getPassword();
 		modelAndView.addObject("name", name);
 		modelAndView.addObject("pwd", pwd);

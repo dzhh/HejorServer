@@ -48,23 +48,23 @@ public class UserController {
 		return "{login:null}";
 	}
 	
-	@RequestMapping(value = "/user/login.do", method = {RequestMethod.POST}, produces = { "text/javascript;charset=UTF-8" })
-	public ModelAndView login_do(HttpServletRequest request){
-		ModelAndView modelAndView = new ModelAndView();
-		User user = login(request, "web");
-		modelAndView.addObject("user", user);
-		if(user!=null) {
-			modelAndView.addObject("message", "登录成功");
-			afterLoginSucess(modelAndView, "web", request);
-			
-			
-			modelAndView.setViewName("/index");
-		} else {
-			modelAndView.addObject("message", "用户名密码不对");
-			modelAndView.setViewName("/login");
-		}
-	    return modelAndView;
-	}
+//	@RequestMapping(value = "/user/login.do", method = {RequestMethod.POST}, produces = { "text/javascript;charset=UTF-8" })
+//	public ModelAndView login_do(HttpServletRequest request){
+//		ModelAndView modelAndView = new ModelAndView();
+//		User user = login(request, "web");
+//		modelAndView.addObject("user", user);
+//		if(user!=null) {
+//			modelAndView.addObject("message", "登录成功");
+//			afterLoginSucess(modelAndView, "web", request);
+//			
+//			
+//			modelAndView.setViewName("/index");
+//		} else {
+//			modelAndView.addObject("message", "用户名密码不对");
+//			modelAndView.setViewName("/login");
+//		}
+//	    return modelAndView;
+//	}
 	
 	/**
 	 * 登录成功后的处理
@@ -75,47 +75,47 @@ public class UserController {
 	
 	
 	
-	@RequestMapping(value = "/user/login.json", method = RequestMethod.POST)
-	@ResponseBody
-	public String login_Json(HttpServletRequest request){
-		User user = login(request, "mobile");
-		if(user != null) {
-			String json = JsonUtil.beanToJson(user);
-			return json;
-		} else {
-			return "{login:false}";
-		}
-	}
+//	@RequestMapping(value = "/user/login.json", method = RequestMethod.POST)
+//	@ResponseBody
+//	public String login_Json(HttpServletRequest request){
+//		User user = login(request, "mobile");
+//		if(user != null) {
+//			String json = JsonUtil.beanToJson(user);
+//			return json;
+//		} else {
+//			return "{login:false}";
+//		}
+//	}
 	
 	/**
 	 * 登录验证
 	 * @param request
 	 * @return
 	 */
-	private User login(HttpServletRequest request, String os) {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		User user = userService.selectByUserName(username);
-		
-		//登录成功   设置session
-		if(user!=null && user.getPassword().equals(MD5Util.getMD5String(password))) {
-			if(os.equals("web")) {
-				request.getSession().setAttribute(com.fly.common.web.util.Const.SESSION_USER, user);
-			} else {
-				String key = request.getSession().getId() + DateUtil.getNowDay();
-				SessionUtils.setLoginSessionMapUser(key, user);
-				user.setIosSessionId(key);
-			}
-			
-			//登录次数加1
-			user.setLoginCount(user.getLoginCount()+1);
-			userService.updateByPrimaryKey(user);
-			
-			return user;
-		} else {
-			return null;
-		}
-	}
+//	private User login(HttpServletRequest request, String os) {
+//		String username = request.getParameter("username");
+//		String password = request.getParameter("password");
+//		User user = userService.selectByUserName(username);
+//		
+//		//登录成功   设置session
+//		if(user!=null && user.getPassword().equals(MD5Util.getMD5String(password))) {
+//			if(os.equals("web")) {
+//				request.getSession().setAttribute(com.fly.common.web.util.Const.SESSION_USER, user);
+//			} else {
+//				String key = request.getSession().getId() + DateUtil.getNowDay();
+//				SessionUtils.setLoginSessionMapUser(key, user);
+////				user.setIosSessionId(key);
+//			}
+//			
+//			//登录次数加1
+////			user.setLoginCount(user.getLoginCount()+1);
+//			userService.updateByPrimaryKey(user);
+//			
+//			return user;
+//		} else {
+//			return null;
+//		}
+//	}
 	
 	
 	/**
@@ -135,52 +135,52 @@ public class UserController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/user/submit.do", method = {RequestMethod.GET, RequestMethod.POST}, produces = { "text/javascript;charset=UTF-8" })
-	public ModelAndView submit_do(HttpServletRequest request){
-		ModelAndView modelAndView = new ModelAndView();
-		String username = request.getParameter("username");
-		String password = MD5Util.getMD5String(request.getParameter("password"));
-		String email = request.getParameter("email");
-		int age = Integer.parseInt(request.getParameter("age"));
-		
-		User user = new User();
-		user.setAge(age);
-		user.setEmail(email);
-		user.setUsername(username);
-		user.setPassword(password);
-		user.setRegisterIp(URLHelper.getRemoteHost(request));
-		user.setRegisterTime(DateUtil.getNowDate());
-		
-		User ifuser = userService.selectByUserName(username);
-		if(ifuser == null) {
-			int insert = userService.insert(user);
-			if(insert == 1) {
-				modelAndView.addObject("message", "注册成功");
-				modelAndView.setViewName("/home/sucess");
-			} else {
-				modelAndView.addObject("message", "注册失败");
-				modelAndView.setViewName("/home/register");
-			}
-		} else {
-			modelAndView.addObject("message", "用户名已存在");
-			modelAndView.setViewName("/home/register");
-		}
-	    return modelAndView;
-	}
+//	@RequestMapping(value = "/user/submit.do", method = {RequestMethod.GET, RequestMethod.POST}, produces = { "text/javascript;charset=UTF-8" })
+//	public ModelAndView submit_do(HttpServletRequest request){
+//		ModelAndView modelAndView = new ModelAndView();
+//		String username = request.getParameter("username");
+//		String password = MD5Util.getMD5String(request.getParameter("password"));
+//		String email = request.getParameter("email");
+//		int age = Integer.parseInt(request.getParameter("age"));
+//		
+//		User user = new User();
+//		user.setAge(age);
+//		user.setEmail(email);
+//		user.setUsername(username);
+//		user.setPassword(password);
+//		user.setRegisterIp(URLHelper.getRemoteHost(request));
+//		user.setRegisterTime(DateUtil.getNowDate());
+//		
+//		User ifuser = userService.selectByUserName(username);
+//		if(ifuser == null) {
+//			int insert = userService.insert(user);
+//			if(insert == 1) {
+//				modelAndView.addObject("message", "注册成功");
+//				modelAndView.setViewName("/home/sucess");
+//			} else {
+//				modelAndView.addObject("message", "注册失败");
+//				modelAndView.setViewName("/home/register");
+//			}
+//		} else {
+//			modelAndView.addObject("message", "用户名已存在");
+//			modelAndView.setViewName("/home/register");
+//		}
+//	    return modelAndView;
+//	}
 	
 	
 	@RequestMapping(value = "/user/logout.do", method = {RequestMethod.GET, RequestMethod.POST}, produces = { "text/javascript;charset=UTF-8" })
 	@ResponseBody
 	public String logout_do(HttpServletRequest request){
 		User user = CmsUtils.getUser(request);
-		request.getSession().removeAttribute(user.getIosSessionId());
+//		request.getSession().removeAttribute(user.getIosSessionId());
 		return "/home/index";
 	}
 	
 	@RequestMapping(value = "/user/logout.json", method = {RequestMethod.GET, RequestMethod.POST})
 	public String logout_Json(HttpServletRequest request){
 		User user = CmsUtils.getUser(request);
-		request.getSession().removeAttribute(user.getIosSessionId());
+//		request.getSession().removeAttribute(user.getIosSessionId());
 		return "{logout:sucess}";
 	}
 	
@@ -193,7 +193,7 @@ public class UserController {
 	@RequestMapping(value = "/user/getUser.json", method = {RequestMethod.GET, RequestMethod.POST} )
 	@ResponseBody
 	public String getUser(HttpServletRequest request){
-		User user = userService.find(1);
+		User user = userService.find("o5UR3xFIif1N2qtNNc4HHsYxMohg");
 		request.setAttribute("user", user);
 		String json = JsonUtil.beanToJson(user);
 		return json;

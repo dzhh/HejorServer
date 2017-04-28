@@ -2,225 +2,73 @@ package com.fly.model;
 
 public class User {
 	
-	private Integer userId;
+	private String userId;
 
-    private String username;
-
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
+    private Integer balance;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
-    private String nickname;
-
-    private String password;
-
-    private String email;
-
-    private Integer age;
-
-    private String lastLoginIp;
-
-    private String lastLoginTime;
-
-    private String registerTime;
-
-    private String registerIp;
-
-    private Integer groupId;
-
-    private Integer sex;
-
-    private Integer money;
-
-    private Integer loginCount;
-
-    private String face;
-
-    private Integer scores;
-
-    private String realname;
-
-    private String telphone;
-
-    private String mobilephone;
-
-    private String dizhi;
-
-    private String shenfenzheng;
-
-    
-    //
-    private String iosSessionId;
-
-    public String getIosSessionId() {
-		return iosSessionId;
+    public Integer getBalance() {
+		return balance;
 	}
 
-	public void setIosSessionId(String iosSessionId) {
-		this.iosSessionId = iosSessionId;
+	public void setBalance(Integer balance) {
+		this.balance = balance;
 	}
 	
 	
-    public String getNickname() {
-        return nickname;
-    }
+	private String phone;
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname == null ? null : nickname.trim();
-    }
+    public String getPhone() {
+		return phone;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
+    private Integer zmxy;
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
+	public Integer getZmxy() {
+		return zmxy;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setZmxy(Integer zmxy) {
+		this.zmxy = zmxy;
+	}
+	
+	private boolean isChange;
+	
+	public boolean isChange() {
+		return isChange;
+	}
 
-    public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
-    }
+	public void setChange(boolean isChange) {
+		this.isChange = isChange;
+	}
 
-    public Integer getAge() {
-        return age;
-    }
+	private String password;
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public String getLastLoginIp() {
-        return lastLoginIp;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	private String headimgurl;
 
-    public void setLastLoginIp(String lastLoginIp) {
-        this.lastLoginIp = lastLoginIp == null ? null : lastLoginIp.trim();
-    }
+	public String getHeadimgurl() {
+		return headimgurl;
+	}
 
-    public String getLastLoginTime() {
-        return lastLoginTime;
-    }
-
-    public void setLastLoginTime(String lastLoginTime) {
-        this.lastLoginTime = lastLoginTime == null ? null : lastLoginTime.trim();
-    }
-
-    public String getRegisterTime() {
-        return registerTime;
-    }
-
-    public void setRegisterTime(String registerTime) {
-        this.registerTime = registerTime == null ? null : registerTime.trim();
-    }
-
-    public String getRegisterIp() {
-        return registerIp;
-    }
-
-    public void setRegisterIp(String registerIp) {
-        this.registerIp = registerIp == null ? null : registerIp.trim();
-    }
-
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
-    public Integer getMoney() {
-        return money;
-    }
-
-    public void setMoney(Integer money) {
-        this.money = money;
-    }
-
-    public Integer getLoginCount() {
-        return loginCount;
-    }
-
-    public void setLoginCount(Integer loginCount) {
-        this.loginCount = loginCount;
-    }
-
-    public String getFace() {
-        return face;
-    }
-
-    public void setFace(String face) {
-        this.face = face == null ? null : face.trim();
-    }
-
-    public Integer getScores() {
-        return scores;
-    }
-
-    public void setScores(Integer scores) {
-        this.scores = scores;
-    }
-
-    public String getRealname() {
-        return realname;
-    }
-
-    public void setRealname(String realname) {
-        this.realname = realname == null ? null : realname.trim();
-    }
-
-    public String getTelphone() {
-        return telphone;
-    }
-
-    public void setTelphone(String telphone) {
-        this.telphone = telphone == null ? null : telphone.trim();
-    }
-
-    public String getMobilephone() {
-        return mobilephone;
-    }
-
-    public void setMobilephone(String mobilephone) {
-        this.mobilephone = mobilephone == null ? null : mobilephone.trim();
-    }
-
-    public String getDizhi() {
-        return dizhi;
-    }
-
-    public void setDizhi(String dizhi) {
-        this.dizhi = dizhi == null ? null : dizhi.trim();
-    }
-
-    public String getShenfenzheng() {
-        return shenfenzheng;
-    }
-
-    public void setShenfenzheng(String shenfenzheng) {
-        this.shenfenzheng = shenfenzheng == null ? null : shenfenzheng.trim();
-    }
+	public void setHeadimgurl(String headimgurl) {
+		this.headimgurl = headimgurl;
+	}
+	
 }

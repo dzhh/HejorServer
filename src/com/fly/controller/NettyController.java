@@ -55,7 +55,4 @@ public class NettyController {
         
         return "{aa:aa}";
 	}
-	
-	
-	
 }

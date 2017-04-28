@@ -35,7 +35,7 @@ public class CmsUtils {
 	 * @param request
 	 * @return
 	 */
-	public static Integer getUserId(HttpServletRequest request) {
+	public static String getUserId(HttpServletRequest request) {
 		User user = getUser(request);
 		if (user != null) {
 			return user.getUserId();

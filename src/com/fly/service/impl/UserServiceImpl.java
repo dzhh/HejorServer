@@ -22,7 +22,7 @@ import com.fly.service.UserService;
 public class UserServiceImpl implements UserService {
 
 	@Override
-	public int deleteByPrimaryKey(Integer userId) {
+	public int deleteByPrimaryKey(String userId) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User selectByPrimaryKey(Integer userId) {
+	public User selectByPrimaryKey(String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -52,15 +52,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User find(Integer userId) {
+	public User find(String userId) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public User selectByUserName(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = mapper.selectByPrimaryKey(userId);
+		return user;
+//		return null;
 	}
 
 	@Override
@@ -81,11 +77,11 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-//	@Resource
-//	private UserMapper mapper;
+	@Resource
+	private UserMapper mapper;
 	
 	
-//	public User find(Integer userId) {
+//	public User find(String userId) {
 //		User user = mapper.selectByPrimaryKey(1);
 //		return user;
 //	}
