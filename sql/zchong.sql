@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: zchong
-# Generation Time: 2017-04-30 17:07:08 +0000
+# Generation Time: 2017-05-01 05:55:04 +0000
 # ************************************************************
 
 
@@ -74,6 +74,7 @@ CREATE TABLE `m_power` (
   `power_id` varchar(32) DEFAULT '',
   `isEmpty` int(1) NOT NULL,
   `p_lock` int(1) NOT NULL,
+  `updateTime` varchar(32) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `m_id` (`m_id`),
   CONSTRAINT `m_power_ibfk_1` FOREIGN KEY (`m_id`) REFERENCES `machine` (`m_id`)
@@ -82,14 +83,14 @@ CREATE TABLE `m_power` (
 LOCK TABLES `m_power` WRITE;
 /*!40000 ALTER TABLE `m_power` DISABLE KEYS */;
 
-INSERT INTO `m_power` (`id`, `m_id`, `c_id`, `power_id`, `isEmpty`, `p_lock`)
+INSERT INTO `m_power` (`id`, `m_id`, `c_id`, `power_id`, `isEmpty`, `p_lock`, `updateTime`)
 VALUES
-	(16,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',1,'2EwrcAGYnYTWGGTd',0,1),
-	(18,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,'kcf7HEBlSUHuZffZ',0,1),
-	(19,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',3,'KwR2j6OZoI4TrscY',0,1),
-	(20,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',4,'oih1JCfb3KQ47eHy',0,1),
-	(21,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',5,'y8sS8aaR3sYIobRW',0,1),
-	(24,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',6,'',1,0);
+	(16,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',1,'2EwrcAGYnYTWGGTd',0,1,''),
+	(18,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,'kcf7HEBlSUHuZffZ',0,1,''),
+	(19,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',3,'KwR2j6OZoI4TrscY',0,1,''),
+	(20,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',4,'oih1JCfb3KQ47eHy',0,1,''),
+	(21,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',5,'y8sS8aaR3sYIobRW',0,1,''),
+	(24,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',6,'',1,0,'');
 
 /*!40000 ALTER TABLE `m_power` ENABLE KEYS */;
 UNLOCK TABLES;
