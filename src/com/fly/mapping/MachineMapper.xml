@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fly.mapping.MachineMapper" >
+  <resultMap id="BaseResultMap" type="com.fly.model.Machine" >
+    <id column="m_id" property="mId" jdbcType="VARCHAR" />
+    <result column="sta_id" property="staId" jdbcType="VARCHAR" />
+    <result column="m_state" property="mState" jdbcType="INTEGER" />
+    <result column="m_wifi" property="mWifi" jdbcType="INTEGER" />
+    <result column="m_4G" property="m4g" jdbcType="INTEGER" />
+    <result column="id" property="id" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    m_id, sta_id, m_state, m_wifi, m_4G, id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from machine
+    where m_id = #{mId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from machine
+    where m_id = #{mId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.fly.model.Machine" >
+    insert into machine (m_id, sta_id, m_state, 
+      m_wifi, m_4G, id)
+    values (#{mId,jdbcType=VARCHAR}, #{staId,jdbcType=VARCHAR}, #{mState,jdbcType=INTEGER}, 
+      #{mWifi,jdbcType=INTEGER}, #{m4g,jdbcType=INTEGER}, #{id,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fly.model.Machine" >
+    insert into machine
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mId != null" >
+        m_id,
+      </if>
+      <if test="staId != null" >
+        sta_id,
+      </if>
+      <if test="mState != null" >
+        m_state,
+      </if>
+      <if test="mWifi != null" >
+        m_wifi,
+      </if>
+      <if test="m4g != null" >
+        m_4G,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mId != null" >
+        #{mId,jdbcType=VARCHAR},
+      </if>
+      <if test="staId != null" >
+        #{staId,jdbcType=VARCHAR},
+      </if>
+      <if test="mState != null" >
+        #{mState,jdbcType=INTEGER},
+      </if>
+      <if test="mWifi != null" >
+        #{mWifi,jdbcType=INTEGER},
+      </if>
+      <if test="m4g != null" >
+        #{m4g,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fly.model.Machine" >
+    update machine
+    <set >
+      <if test="staId != null" >
+        sta_id = #{staId,jdbcType=VARCHAR},
+      </if>
+      <if test="mState != null" >
+        m_state = #{mState,jdbcType=INTEGER},
+      </if>
+      <if test="mWifi != null" >
+        m_wifi = #{mWifi,jdbcType=INTEGER},
+      </if>
+      <if test="m4g != null" >
+        m_4G = #{m4g,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+    </set>
+    where m_id = #{mId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fly.model.Machine" >
+    update machine
+    set sta_id = #{staId,jdbcType=VARCHAR},
+      m_state = #{mState,jdbcType=INTEGER},
+      m_wifi = #{mWifi,jdbcType=INTEGER},
+      m_4G = #{m4g,jdbcType=INTEGER},
+      id = #{id,jdbcType=INTEGER}
+    where m_id = #{mId,jdbcType=VARCHAR}
+  </update>
+</mapper>
