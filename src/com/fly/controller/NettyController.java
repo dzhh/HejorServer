@@ -38,7 +38,7 @@ public class NettyController {
 	 */
 	@RequestMapping(value = "/send/meassage", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public String login_mobile(HttpServletRequest request) {
+	public String sendMeassage(HttpServletRequest request) {
 		String msgType = request.getParameter("msgType");
 		String sessonId = request.getParameter("sessonID");
 		String cID = request.getParameter("cID");
