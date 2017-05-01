@@ -1,7 +1,9 @@
 package com.fly.controller;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +17,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fly.model.M2Power;
 import com.fly.model.Machine;
+import com.fly.model.Order;
 import com.fly.model.Power;
+import com.fly.model.User;
 import com.fly.netty.server.NettyChannelMap;
 import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
+import com.fly.service.OrderService;
+import com.fly.service.UserService;
 import com.fly.util.AscPowerComparator;
 import com.fly.util.JsonUtil;
 
@@ -38,6 +44,12 @@ public class MobileController {
 	
 	@Autowired
 	private M2PowerService m2PowerService;
+	
+	@Autowired
+	private UserService usrService;
+	
+	@Autowired
+	private OrderService orderService;
 	
 	/**
 	 * 二维码扫描 跳转到指定app(微信、支付宝)
@@ -64,42 +76,73 @@ public class MobileController {
 	 * @return
 	 */
 	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView getPowerSeril(HttpServletRequest request){
-	    ModelAndView modelAndView = new ModelAndView();
-//	    Machine machine = machineService.selectByPrimaryKey("1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV");
-	    List<M2Power> power = m2PowerService.selectByM_Id("1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV");
-	    M2Power mpower = getPower(power);
-	    modelAndView.addObject(mpower);
-		return modelAndView;
+	public String getPowerSeril(HttpServletRequest request){
+	    ModelAndView modelAndView = new ModelAndView();	
 	    //判断充电宝情况
 //	    String mId = (String) request.getAttribute("m_id");
-//	    int machineState = analyzeMachine(mId);
-//	    if(machineState == -1) {
-//		    modelAndView.addObject("msg", "机器未联网");
+//	    String userId = (String) request.getAttribute("openId");
+	    String mId = "1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV";
+	    String userId = "o5UR3xFIif1N2qtNNc4HHsYxMohg";
+	    M2Power powerInfo = analyzeMachine(mId);
+	    if(powerInfo == null) {
+		    modelAndView.addObject("msg", "暂不能使用");
 //		    modelAndView.setViewName("/weilianwang");
-//		    return modelAndView;
-//	    }
-//	    
-//	    if(machineState == 0) {
-//	    	modelAndView.addObject("msg", "充电宝数量不足");
-//		    modelAndView.setViewName("/weilianwang");
-//		    return modelAndView;
-//	    }
-//	    
-//	    // 接着判断执行
-//	    String openId = (String) request.getAttribute("openId");
-//	    
-//
-//	    
-//	    
-//	    String agent = request.getHeader("User-Agent").toLowerCase();
-//	    int way = 0;
-//
-//	    modelAndView.addObject("agent", agent);
-//	    modelAndView.setViewName("/chongzhi");
-//	    return modelAndView;
+			String json = JsonUtil.beanToJson(modelAndView);
+		    return json;
+	    }
+	    // 接着判断用户
+	    int userState = analyzeUser(userId);
+	    if(userState ==1 && powerInfo !=null){
+	    	//通知机器
+	    	modelAndView.addObject("cId", powerInfo.getcId());
+			String json = null;
+			//生成订单
+			Order order = addOrderForUser(userId, powerInfo);
+			int resp = orderService.insert(order);
+			if(resp == 1){
+				//返回订单
+				request.setAttribute("order", order);
+				json = JsonUtil.beanToJson(order);
+			}
+		    return json;
+		    
+	    }else if(userState == -1){
+	    	//交押金
+	    	modelAndView.addObject("recharge", 100);
+			String json = JsonUtil.beanToJson(modelAndView);
+		    return json;
+		    
+	    }else{
+	    	//充值
+	    	modelAndView.addObject("recharge", userState);
+			String json = JsonUtil.beanToJson(modelAndView);
+		    return json;
+	    }
+	}
+	/**
+	 * 新建租赁订单
+	 * @param 
+	 * @return
+	 */
+	private Order addOrderForUser(String userId, M2Power mpower){
+		Order order = new Order();
+		Calendar now = Calendar.getInstance();
+		String timeStr = Long.toString(now.getTimeInMillis());
+		int num = (int)(Math.random()*1000);
+		String orderId = timeStr + num;
+		order.setOrderId(orderId);
+		order.setUserid(userId);
+		order.setmId(mpower.getmId());
+		order.setPowerId(mpower.getPowerId());
+		order.setmId(mpower.getmId());
+		order.setOutTime(timeStr);
+		order.setIsChange(0);
+		order.setTotalFee(0);
+		order.setOrderState(0);
+		return order;
 	}
 	
+
 	/**
 	 * 判断充电宝的情况 循环次数最少的
 	 * @param 
@@ -109,47 +152,69 @@ public class MobileController {
 		if(powerList.size() <=0){
 			return null;
 		}
-		Collections.sort(powerList, new AscPowerComparator());
+		List<M2Power> newpower = new ArrayList<M2Power>();
+        for (M2Power mpower : powerList) {
+            if(mpower.getPower().getpQuantity()> 50){
+            	newpower.add(mpower);
+            }
+        }
+		Collections.sort(newpower, new AscPowerComparator());
 		M2Power p = powerList.get(0);
 		return p;
 	}
-//	private static class AscPowerComparator implements Comparator<M2Power>{
-//
-//		@Override
-//		public int compare(M2Power o1, M2Power o2) {
-//			// TODO Auto-generated method stub
-//			return o1.getPower().getpCount() - o2.getPower().getpCount();
-//		}
-//	}
+	private int analyzeUser(String userId){
+		
+		int state = -1;
+		User usr = usrService.find(userId);
+		//不存在用户
+		if(usr == null){
+			return -1;
+		}
+		//拉黑用户
+		
+		//余额判断
+		int balance = usr.getBalance();
+		if(balance > 80){
+			return 1;//发送消息到机器
+		}else{
+			return (100- balance);
+		}
+	}
 	
 	/**
 	 * 三种情况
 	 * 判断机器的情况
-	 * @param mId
+	 * @param mId  返回值0的时候没有可借，-1的时候，机器不可用，1-6的时候，机舱编号
 	 * @return
 	 */
-	private int analyzeMachine(String mId) {
-		int state = -1;
+	private M2Power analyzeMachine(String mId) {
+		M2Power mpower = null;
 		//1. 判断机器是否联网 根据nutty
-		Channel channel = NettyChannelMap.getSocketChannel(mId);
-		if(channel == null) {
-			state = -1;
+//		Channel channel = NettyChannelMap.getSocketChannel(mId);
+//		if(channel == null) {
+//			state = -1;
+//		}
+		//数据库查询判断机器状态
+		Machine machine = machineService.selectByPrimaryKey(mId);
+		int mstate = machine.getmState();
+		if(mstate == 0){
+			return null;
 		}
 		
 		//2. 判断机器充电宝数量 查询数据库或者缓存
-		int count = 0;
-		
-		if(count <= 1) {
-			state = 0;
+	    List<M2Power> powerList = m2PowerService.selectByM_Id(mId);
+		int count = powerList.size();
+		if(count < 1) {
+			return null;
 		}
-		
-		count = 5;
 		//3. 机器联网 充电宝数量大于1
-		if(channel!=null && count>=1) {
-			state = 1;
+//		if(channel!=null && count>=1) {
+//			state = 1;
+//		}
+		if(mstate==1 && count >=1){
+			mpower = getPower(powerList);
 		}
-		
-		return state;
+		return mpower;
 	}
 	
 }

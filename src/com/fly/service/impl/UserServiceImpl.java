@@ -20,7 +20,7 @@ import com.fly.service.UserService;
 @Service
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class UserServiceImpl implements UserService {
-
+	
 	@Override
 	public int deleteByPrimaryKey(String userId) {
 		// TODO Auto-generated method stub
