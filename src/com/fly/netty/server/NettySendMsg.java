@@ -1,7 +1,7 @@
 package com.fly.netty.server;
 
-import com.fly.netty.common.NettyMessage;
-import com.fly.netty.util.JsonUtil;
+
+import com.fly.netty.codec.protobuf.MsgServer2Client;
 
 import io.netty.channel.Channel;
 
@@ -10,9 +10,8 @@ public class NettySendMsg {
 	/**
 	 * 发送消息
 	 */
-	public static void sendMsg(Channel channel, NettyMessage nettyMessage) {
-        channel.writeAndFlush(JsonUtil.beanToJson(nettyMessage));
-        
-        //如何记录发送状态
+	public static void sendMsg(Channel channel, MsgServer2Client.Msg msg) {
+        channel.writeAndFlush(msg);
+        //处理是否发送成功
 	}
 }
