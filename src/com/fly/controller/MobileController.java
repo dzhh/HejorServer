@@ -72,17 +72,16 @@ public class MobileController {
 	
 	/**
 	 * 判断充电宝
-	 * @param request
+	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg
 	 * @return
 	 */
 	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST})
 	public String getPowerSeril(HttpServletRequest request){
 	    ModelAndView modelAndView = new ModelAndView();	
 	    //判断充电宝情况
-//	    String mId = (String) request.getAttribute("m_id");
-//	    String userId = (String) request.getAttribute("openId");
-	    String mId = "1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV";
-	    String userId = "o5UR3xFIif1N2qtNNc4HHsYxMohg";
+	    String mId = (String) request.getAttribute("m_id");
+	    String userId = (String) request.getAttribute("openId");
+
 	    M2Power powerInfo = analyzeMachine(mId);
 	    if(powerInfo == null) {
 		    modelAndView.addObject("msg", "暂不能使用");
@@ -109,6 +108,7 @@ public class MobileController {
 	    }else if(userState == -1){
 	    	//交押金
 	    	modelAndView.addObject("recharge", 100);
+			request.setAttribute("msg", modelAndView);
 			String json = JsonUtil.beanToJson(modelAndView);
 		    return json;
 		    
