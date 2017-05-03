@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -75,18 +78,22 @@ public class MobileController {
 	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg
 	 * @return
 	 */
-	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST})
-	public String getPowerSeril(HttpServletRequest request){
+	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String getPowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="openId") String userId){
 	    ModelAndView modelAndView = new ModelAndView();	
 	    //判断充电宝情况
-	    String mId = (String) request.getAttribute("m_id");
-	    String userId = (String) request.getAttribute("openId");
+//	    String mId = (String) request.getAttribute("m_id");
+//	    String userId = (String) request.getAttribute("openId");
 
 	    M2Power powerInfo = analyzeMachine(mId);
 	    if(powerInfo == null) {
-		    modelAndView.addObject("msg", "暂不能使用");
+//		    modelAndView.addObject("msg", "暂不能使用");
 //		    modelAndView.setViewName("/weilianwang");
-			String json = JsonUtil.beanToJson(modelAndView);
+	    	Map<String, String> map = new HashMap<String, String>();
+	    	map.put("req", "-1");
+	    	map.put("msg", "该机器暂不能使用");
+			String json = JsonUtil.beanToJson(map);
 		    return json;
 	    }
 	    // 接着判断用户
@@ -98,24 +105,30 @@ public class MobileController {
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
 			int resp = orderService.insert(order);
+			//机器关系表 Power表修改状态(netty 收到回应信息后修改？)
 			if(resp == 1){
 				//返回订单
-				request.setAttribute("order", order);
+//				request.setAttribute("order", order);
 				json = JsonUtil.beanToJson(order);
 			}
 		    return json;
 		    
 	    }else if(userState == -1){
 	    	//交押金
-	    	modelAndView.addObject("recharge", 100);
-			request.setAttribute("msg", modelAndView);
-			String json = JsonUtil.beanToJson(modelAndView);
+	    	Map<String, String> map = new HashMap<String, String>();
+	    	map.put("req", "0");
+	    	map.put("recharge", "100");
+	    	map.put("msg", "请缴纳押金");
+			String json = JsonUtil.beanToJson(map);
 		    return json;
 		    
 	    }else{
 	    	//充值
-	    	modelAndView.addObject("recharge", userState);
-			String json = JsonUtil.beanToJson(modelAndView);
+	    	Map<String, String> map = new HashMap<String, String>();
+	    	map.put("req", "0");
+	    	map.put("msg", "余额不足请充值");
+	    	map.put("recharge", String.valueOf(userState));
+			String json = JsonUtil.beanToJson(map);
 		    return json;
 	    }
 	}
