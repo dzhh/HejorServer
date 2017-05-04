@@ -1,8 +1,11 @@
-package com.fly.netty.server;
+package com.fly.common.web.servlet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+
+import com.fly.netty.server.NettyServer;
+import com.fly.util.WebUtil;
 
 /**
  * 初始化servlet nettyServer
@@ -19,6 +22,7 @@ public class NettyServerServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		WebUtil.PATH = this.getServletConfig().getServletContext().getRealPath("/");
 		
 		String port = config.getInitParameter("port");
 

@@ -18,7 +18,6 @@ import com.fly.netty.common.NettyMessage;
 import com.fly.netty.server.MsgReqMap;
 import com.fly.netty.server.NettyChannelMap;
 import com.fly.netty.server.NettySendMsg;
-import com.fly.netty.util.JsonUtil;
 
 import io.netty.channel.Channel;
 

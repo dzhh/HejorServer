@@ -87,7 +87,7 @@
 
 	<servlet>
 	     <servlet-name>NettyServerServlet</servlet-name>
-	     <servlet-class>com.fly.netty.server.NettyServerServlet</servlet-class>
+	     <servlet-class>com.fly.common.web.servlet.NettyServerServlet</servlet-class>
 		      <init-param>
 			   <param-name>port</param-name>
 			   <param-value>10080</param-value>

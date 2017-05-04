@@ -17,68 +17,60 @@ import com.fly.service.UserService;
  * 类说明
  */
 
-@Service
+@Service("userServiceImpl")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class UserServiceImpl implements UserService {
 	
+	@Resource
+	private UserMapper mapper;
+	
 	@Override
 	public int deleteByPrimaryKey(String userId) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int insertSelective(User record) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public User selectByPrimaryKey(String userId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(User record) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int updateByPrimaryKey(User record) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public User find(String userId) {
-		// TODO Auto-generated method stub
 		User user = mapper.selectByPrimaryKey(userId);
 		return user;
-//		return null;
 	}
 
 	@Override
 	public List<User> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return mapper.findAll();
 	}
 
 	@Override
 	public int insert(User record) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public List<User> selectUserList(User user) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Resource
-	private UserMapper mapper;
+	
 	
 	
 //	public User find(String userId) {
