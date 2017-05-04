@@ -31,6 +31,7 @@ import io.netty.channel.ChannelFutureListener;
 @Controller
 public class NettyController {
 
+	
 	/**
 	 * 向客户端发送数据
 	 * http://127.0.0.1:8080/send/meassage?sessonID=001&cID=a_2&msgType=open
