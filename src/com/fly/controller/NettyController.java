@@ -20,6 +20,8 @@ import com.fly.netty.server.NettyChannelMap;
 import com.fly.netty.server.NettySendMsg;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 
 /**
  * 消息发送服务
@@ -52,7 +54,21 @@ public class NettyController {
 				MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
 		    	msgReqbuilder.setMsgType(MsgServer2Client.MsgType.open);
 		    	msgReqbuilder.setCId(cID);
-				NettySendMsg.sendMsg(channel, msgReqbuilder.build());
+//				NettySendMsg.sendMsg(channel, msgReqbuilder.build());
+				//发送消息
+		        channel.writeAndFlush(msgReqbuilder.build()).addListener(new ChannelFutureListener() {
+					@Override
+					public void operationComplete(ChannelFuture future) throws Exception {
+						if(future.isSuccess()) {
+							System.out.println("发送成功");
+							//处理记录等
+							
+						} else {
+							//发送失败 处理
+							System.out.println("发送失败");
+						}
+					}
+				});
 			}
 		}
         
