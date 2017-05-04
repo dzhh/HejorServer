@@ -16,6 +16,4 @@ public class TaskOne extends QuartzJobBean {
 	protected void executeInternal(JobExecutionContext arg0) throws JobExecutionException {
 //		System.out.println("-----定时任务执行-----");
 	}
-
-
 }
