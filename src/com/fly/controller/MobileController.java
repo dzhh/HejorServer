@@ -1,5 +1,6 @@
 package com.fly.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -102,10 +103,10 @@ public class MobileController {
 	    	//通知机器
 	    	modelAndView.addObject("cId", powerInfo.getcId());
 			String json = null;
+			//修改机器关系表状态 (netty 收到回应信息后修改)
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
 			int resp = orderService.insert(order);
-			//机器关系表 Power表修改状态(netty 收到回应信息后修改？)
 			if(resp == 1){
 				//返回订单
 //				request.setAttribute("order", order);
@@ -132,6 +133,82 @@ public class MobileController {
 		    return json;
 	    }
 	}
+	
+	/**
+	 * 更换充电宝
+	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg&orderId=1111111111
+	 * @return
+	 */
+	@RequestMapping(value="/mobile/change",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String getChangePowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="openId") String userId, @RequestParam(value="orderId") String orderId){
+		
+		if(mId !=null&& mId.length()>0 || userId != null&& userId.length()>0  || orderId != null&& orderId.length()>0 ){
+			
+			Order order = orderService.selectByPrimaryKey(orderId);
+	    	Map<String, String> respMap = new HashMap<String, String>();
+	    	//判断机器是慢的还是空的
+	    	int powerNum = getPowerNum(mId);
+	    	if(powerNum == 0 || powerNum == 6){
+	    		//无空仓还，没有可借的
+	    	}
+	    	//监测netty接收归还消息，powerId是否一致
+	    	
+			return null;
+			
+		}else{
+			return null;
+		}
+	}
+	/**
+	 * 检测订单中充电宝能否更换
+	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg&orderId=1111111111
+	 * @return
+	 */
+	
+	@RequestMapping(value="/mobile/check",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String checkChangeState( @RequestParam(value="orderId") String orderId){
+		if(orderId != null && orderId.length()>0){
+			Order order = orderService.selectByPrimaryKey(orderId);
+			int isChange = order.getIsChange();
+			String outTime= order.getOutTime();
+			int rentHours = getRentHour(outTime);
+	    	Map<String, String> map = new HashMap<String, String>();
+			if(rentHours < 48){
+		    	map.put("req", "-1");
+		    	map.put("msg", "租借未超过48小时，无法更换");
+				String json = JsonUtil.beanToJson(map);
+			    return json;
+			}else if(rentHours > 8760){
+				//超过一年无法更换
+		    	map.put("req", "-1");
+		    	map.put("msg", "租借已经超过一年，无法更换");
+				String json = JsonUtil.beanToJson(map);
+			    return json;
+			}else{
+		    	map.put("req", "1");
+		    	map.put("msg", "更换");
+				String json = JsonUtil.beanToJson(map);
+			    return json;
+			}
+		}else{
+			return null;
+		}
+	}
+	private int getRentHour(String outTime){
+//		Timestamp curStamp = new Timestamp(System.currentTimeMillis());
+		Long curTime = System.currentTimeMillis();
+//		Date curDate = new Date(curStamp.getTime());
+//		Timestamp outStamp = new Timestamp(Long.parseLong(outTime));
+//		Date outDate = new Date(outStamp.getTime());
+		Long orderTime = Long.parseLong(outTime);
+		long diff = curTime - orderTime;
+		long diffHours = diff / (60 * 60 * 1000);
+		
+		return (int)diffHours;
+	}
+	
 	/**
 	 * 新建租赁订单
 	 * @param 
@@ -139,8 +216,7 @@ public class MobileController {
 	 */
 	private Order addOrderForUser(String userId, M2Power mpower){
 		Order order = new Order();
-		Calendar now = Calendar.getInstance();
-		String timeStr = Long.toString(now.getTimeInMillis());
+		String timeStr = Long.toString(System.currentTimeMillis());
 		int num = (int)(Math.random()*1000);
 		String orderId = timeStr + num;
 		order.setOrderId(orderId);
@@ -229,5 +305,10 @@ public class MobileController {
 		}
 		return mpower;
 	}
-	
+	private int getPowerNum(String mId){
+	    List<M2Power> powerList = m2PowerService.selectByM_Id(mId);
+		int count = powerList.size();
+		return count;
+	}
+
 }
