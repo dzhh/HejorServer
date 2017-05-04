@@ -11,13 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fly.netty.codec.protobuf.MsgClient2Server;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
-import com.fly.netty.common.Body;
-import com.fly.netty.common.Header;
-import com.fly.netty.common.MessageType;
-import com.fly.netty.common.NettyMessage;
 import com.fly.netty.server.MsgReqMap;
 import com.fly.netty.server.NettyChannelMap;
-import com.fly.netty.server.NettySendMsg;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
