@@ -57,7 +57,7 @@ public class NettyController {
 					public void operationComplete(ChannelFuture future) throws Exception {
 						if(future.isSuccess()) {
 							System.out.println("发送成功");
-							//处理记录等
+							//处理记录 
 							
 						} else {
 							//发送失败 处理

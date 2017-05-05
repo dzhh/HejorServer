@@ -89,8 +89,6 @@ public class MobileController {
 
 	    M2Power powerInfo = analyzeMachine(mId);
 	    if(powerInfo == null) {
-//		    modelAndView.addObject("msg", "暂不能使用");
-//		    modelAndView.setViewName("/weilianwang");
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "-1");
 	    	map.put("msg", "该机器暂不能使用");
