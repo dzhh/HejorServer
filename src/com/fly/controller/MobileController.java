@@ -1,10 +1,7 @@
 package com.fly.controller;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fly.model.M2Power;
 import com.fly.model.Machine;
 import com.fly.model.Order;
-import com.fly.model.Power;
 import com.fly.model.User;
-import com.fly.netty.server.NettyChannelMap;
 import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
 import com.fly.service.OrderService;
@@ -32,7 +27,6 @@ import com.fly.service.UserService;
 import com.fly.util.AscPowerComparator;
 import com.fly.util.JsonUtil;
 
-import io.netty.channel.Channel;
 
 /**
  *
@@ -100,7 +94,7 @@ public class MobileController {
 	    if(userState ==1 && powerInfo !=null){
 	    	//通知机器
 	    	modelAndView.addObject("cId", powerInfo.getcId());
-			String json = null;
+			String json = "";
 			//修改机器关系表状态 (netty 收到回应信息后修改)
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
@@ -264,7 +258,7 @@ public class MobileController {
 		if(balance > 80){
 			return 1;//发送消息到机器
 		}else{
-			return (100- balance);
+			return (100 - balance);
 		}
 	}
 	
@@ -283,17 +277,29 @@ public class MobileController {
 //		}
 		//数据库查询判断机器状态
 		Machine machine = machineService.selectByPrimaryKey(mId);
-		int mstate = machine.getmState();
-		if(mstate == 0){
+		int mstate = 0;
+		if(machine != null) {
+			mstate = machine.getmState();
+			if(mstate == 0){
+				return null;
+			}
+		} else {
 			return null;
 		}
+
 		
 		//2. 判断机器充电宝数量 查询数据库或者缓存
 	    List<M2Power> powerList = m2PowerService.selectByM_Id(mId);
-		int count = powerList.size();
-		if(count < 1) {
+	    int count = 0;
+		if(powerList != null) {
+			count = powerList.size();
+			if(count < 1) {
+				return null;
+			}
+		} else {
 			return null;
 		}
+	    
 		//3. 机器联网 充电宝数量大于1
 //		if(channel!=null && count>=1) {
 //			state = 1;
@@ -303,6 +309,7 @@ public class MobileController {
 		}
 		return mpower;
 	}
+	
 	private int getPowerNum(String mId){
 	    List<M2Power> powerList = m2PowerService.selectByM_Id(mId);
 		int count = powerList.size();

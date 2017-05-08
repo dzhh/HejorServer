@@ -2,11 +2,13 @@ package com.fly.netty.server.handler;
 
 import java.util.List;
 
+import com.fly.model.Machine;
 import com.fly.model.User;
 import com.fly.netty.codec.protobuf.MsgClient2Server;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
 import com.fly.netty.server.MsgReqMap;
 import com.fly.netty.server.NettyChannelMap;
+import com.fly.service.MachineService;
 import com.fly.service.UserService;
 import com.fly.util.SpringContextUtil;
 
@@ -37,8 +39,10 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		// 消息类型
 		MsgClient2Server.MsgType msgType =  msgReq.getMsgType();
 		
-		// 初始化 init
-		if(msgType.equals(MsgClient2Server.MsgType.init)) {
+		
+		if(msgType.equals(MsgClient2Server.MsgType.mid)) {//验证机器
+			handleMidMsg(ctx, msgReq);
+		} else if(msgType.equals(MsgClient2Server.MsgType.init)) {// 初始化 init
 			initMsg(ctx, msgReq);
 			//测试获取spring bean
 			UserService userService = SpringContextUtil.getBean("userServiceImpl");
@@ -61,19 +65,53 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	}
 	
 	/**
+	 * 处理mid类型消息
+	 * 验证机器是否存在
+	 * 		如果存在  存储长连接
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void handleMidMsg(ChannelHandlerContext ctx, MsgClient2Server.Msg msgReq) {
+		String mId = msgReq.getMachine().getMId();
+		//验证过程   也可以在缓存中
+		MachineService machineService = SpringContextUtil.getBean("machineServiceImpl");
+		Machine machine = machineService.selectByPrimaryKey(mId);
+		if(machine != null) {
+			try {
+				//存储连接  存储机器状态
+				NettyChannelMap.add(msgReq.getSessionID(), (SocketChannel)ctx.channel());
+				//返回 ok
+				MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+				builder.setMsgType(MsgServer2Client.MsgType.resp);
+				builder.setMsgInfo("midSucess");
+				MsgServer2Client.Msg msgResp = builder.build();
+				ctx.writeAndFlush(msgResp);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			//返回 error
+			MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+			builder.setMsgType(MsgServer2Client.MsgType.resp);
+			builder.setMsgInfo("midError");
+			MsgServer2Client.Msg msgResp = builder.build();
+			ctx.writeAndFlush(msgResp);
+		}
+	}
+	
+	
+	/**
 	 * 初始化信息
 	 * @param ctx
 	 * @param msgReq
 	 * @throws Exception
 	 */
 	private void initMsg(ChannelHandlerContext ctx, MsgClient2Server.Msg msg) throws Exception {
-		//存储连接  存储机器状态
-		NettyChannelMap.add(msg.getSessionID(), (SocketChannel)ctx.channel());
 		MsgReqMap.add(msg.getSessionID(), msg);
 		
 		//返回 ok
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		builder.setMsgType(MsgServer2Client.MsgType.qita);
+		builder.setMsgType(MsgServer2Client.MsgType.resp);
 		builder.setMsgInfo("ok");
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
