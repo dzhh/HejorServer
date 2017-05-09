@@ -51,13 +51,20 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		} else if(msgType.equals(MsgClient2Server.MsgType.open)) {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.lock)) {
+			//验证订单时间 72小时，一年后无法归还
+			
+			
+			//1、能归还：更新订单，机器关系表，根据openId微信发送消息(归还成功消息)
+			
+			//归还失败：数据库不操作，发送消息到机器打开该编号电池舱
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.heat)) {
 			
-		} else if(msgType.equals(MsgClient2Server.MsgType.update)) {
+		} else if(msgType.equals(MsgClient2Server.MsgType.update)) {//机器自检更新
+			//1、
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.error)) {
-			
+			//机器自检报错
 		}
 		
 		

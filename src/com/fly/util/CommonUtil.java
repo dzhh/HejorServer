@@ -14,4 +14,16 @@ public class CommonUtil {
 		} 
 		return -1;
 	}
+	public static int getRentHour(String outTime){
+//		Timestamp curStamp = new Timestamp(System.currentTimeMillis());
+		Long curTime = System.currentTimeMillis();
+//		Date curDate = new Date(curStamp.getTime());
+//		Timestamp outStamp = new Timestamp(Long.parseLong(outTime));
+//		Date outDate = new Date(outStamp.getTime());
+		Long orderTime = Long.parseLong(outTime);
+		long diff = curTime - orderTime;
+		long diffHours = diff / (60 * 60 * 1000);
+		
+		return (int)diffHours;
+	}
 }

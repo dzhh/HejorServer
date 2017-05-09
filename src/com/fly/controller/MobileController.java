@@ -25,6 +25,7 @@ import com.fly.service.MachineService;
 import com.fly.service.OrderService;
 import com.fly.service.UserService;
 import com.fly.util.AscPowerComparator;
+import com.fly.util.CommonUtil;
 import com.fly.util.JsonUtil;
 
 
@@ -144,7 +145,15 @@ public class MobileController {
 	    	if(powerNum == 0 || powerNum == 6){
 	    		//无空仓还，没有可借的
 	    	}
-	    	//监测netty接收归还消息，powerId是否一致
+	    	//监测netty接收归还消息，powerId跟订单中powerId是否一致
+	    	//一致的情况- 1、获取新的充电宝
+	    	
+	    	//2、结束该orderId 对应的订单状态
+	    	
+	    	//3、通知机器打开新的机舱，并生成一个新的订单
+	    	
+	    	//4、根据url传参数，微信发送更新模板消息给用户
+	    	
 	    	
 			return null;
 			
@@ -165,7 +174,7 @@ public class MobileController {
 			Order order = orderService.selectByPrimaryKey(orderId);
 			int isChange = order.getIsChange();
 			String outTime= order.getOutTime();
-			int rentHours = getRentHour(outTime);
+			int rentHours = CommonUtil.getRentHour(outTime);
 	    	Map<String, String> map = new HashMap<String, String>();
 			if(rentHours < 48){
 		    	map.put("req", "-1");
@@ -188,18 +197,7 @@ public class MobileController {
 			return null;
 		}
 	}
-	private int getRentHour(String outTime){
-//		Timestamp curStamp = new Timestamp(System.currentTimeMillis());
-		Long curTime = System.currentTimeMillis();
-//		Date curDate = new Date(curStamp.getTime());
-//		Timestamp outStamp = new Timestamp(Long.parseLong(outTime));
-//		Date outDate = new Date(outStamp.getTime());
-		Long orderTime = Long.parseLong(outTime);
-		long diff = curTime - orderTime;
-		long diffHours = diff / (60 * 60 * 1000);
-		
-		return (int)diffHours;
-	}
+
 	
 	/**
 	 * 新建租赁订单
