@@ -56,4 +56,11 @@ public class OrderServiceImpl implements OrderService{
 		return s;
 	}
 
+	@Override
+	public Order selectByPowerId(String powerId) {
+		// TODO Auto-generated method stub
+		Order order = mapper.selectByPowerId(powerId);
+		return order;
+	}
+
 }

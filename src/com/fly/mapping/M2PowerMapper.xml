@@ -135,6 +135,6 @@
       d_lock = #{dLock,jdbcType=INTEGER},
       p_lock = #{pLock,jdbcType=INTEGER}
       updateTime = #{updateTime,jdbcType=VARCHAR}
-    where m_id = #{m_id,jdbcType=VARCHAR} and c_id = #{m_id,jdbcType=INTEGER}
+    where m_id = #{m_id,jdbcType=VARCHAR} and c_id = #{c_id,jdbcType=INTEGER}
   </update>
 </mapper>

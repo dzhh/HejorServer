@@ -3,13 +3,17 @@ package com.fly.netty.server.handler;
 import java.util.List;
 
 import com.fly.model.Machine;
+import com.fly.model.Order;
 import com.fly.model.User;
 import com.fly.netty.codec.protobuf.MsgClient2Server;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
 import com.fly.netty.server.MsgReqMap;
 import com.fly.netty.server.NettyChannelMap;
+import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
+import com.fly.service.OrderService;
 import com.fly.service.UserService;
+import com.fly.util.CommonUtil;
 import com.fly.util.SpringContextUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -52,23 +56,58 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.lock)) {
 			//验证订单时间 72小时，一年后无法归还
+			String cId = msgReq.getMachine().getCabin(0).getCId();
+			String powerId = msgReq.getMachine().getCabin(0).getPId();
+			OrderService orderService = SpringContextUtil.getBean("OrderServiceImpl");
+			Order order =  orderService.selectByPowerId(powerId);
+			String outTime = order.getOutTime();
+			int rentHours = CommonUtil.getRentHour(outTime);
+			if(rentHours > 72){
+				
+				//不能归还，只能更换，发送弹出消息 cId
 			
-			
-			//1、能归还：更新订单，机器关系表，根据openId微信发送消息(归还成功消息)
-			
-			//归还失败：数据库不操作，发送消息到机器打开该编号电池舱
+			}else{
+				//1、能归还：更新订单，
+				order.setOrderState(1);
+				orderService.updateByPrimaryKey(order);
+				
+				//机器关系表，更新信息，填充充电宝，
+				M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerServiceImpl");
+				
+				//根据powerId跟新充电宝电量
+				
+				//根据openId微信发送消息(归还成功消息)
+				String openId = order.getUserid();
+				String orderId = order.getOrderId();
+
+				//更新用余额 rentHours * 1 = RMB
+				
+			}			
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.heat)) {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.update)) {//机器自检更新
-			//1、
+			//1、更新数据库
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.error)) {
+			
 			//机器自检报错
 		}
-		
-		
-		
+//		else if(msgType.equals(MsgClient2Server.MsgType.change)){//更换充电宝
+//			//根据读取redis缓存，根据powerId查找orderId
+//			
+//			//无缓存key，通知机器弹出
+//			
+//			//有缓存，获取弹出的充电宝
+//			
+//			//通知app充电舱编号
+//			
+//			//app回应开仓后生成新的订单，新orderId，新的充电宝，userId，借出时间
+//			
+//			//删除缓存
+//			
+//			//通知微信
+//		}
 	}
 	
 	/**

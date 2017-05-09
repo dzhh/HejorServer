@@ -140,20 +140,12 @@ public class MobileController {
 			
 			Order order = orderService.selectByPrimaryKey(orderId);
 	    	Map<String, String> respMap = new HashMap<String, String>();
-	    	//判断机器是慢的还是空的
+	    	//判断机器是满的还是空的
 	    	int powerNum = getPowerNum(mId);
 	    	if(powerNum == 0 || powerNum == 6){
 	    		//无空仓还，没有可借的
 	    	}
-	    	//监测netty接收归还消息，powerId跟订单中powerId是否一致
-	    	//一致的情况- 1、获取新的充电宝
-	    	
-	    	//2、结束该orderId 对应的订单状态
-	    	
-	    	//3、通知机器打开新的机舱，并生成一个新的订单
-	    	
-	    	//4、根据url传参数，微信发送更新模板消息给用户
-	    	
+	    	//通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
 	    	
 			return null;
 			

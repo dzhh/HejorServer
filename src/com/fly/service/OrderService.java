@@ -14,4 +14,6 @@ public interface OrderService {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+    Order selectByPowerId(String powerId);
+
 }
