@@ -65,7 +65,9 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.error)) {
 			//机器自检报错
-		}
+		} else if(msgType.equals(MsgClient2Server.MsgType.change)) {// 新加归还
+			
+		} 
 		
 		
 		
