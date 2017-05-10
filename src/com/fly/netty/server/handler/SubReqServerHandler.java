@@ -93,21 +93,21 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			
 			//机器自检报错
 		}
-//		else if(msgType.equals(MsgClient2Server.MsgType.change)){//更换充电宝
-//			//根据读取redis缓存，根据powerId查找orderId
-//			
-//			//无缓存key，通知机器弹出
-//			
-//			//有缓存，获取弹出的充电宝
-//			
-//			//通知app充电舱编号
-//			
-//			//app回应开仓后生成新的订单，新orderId，新的充电宝，userId，借出时间
-//			
-//			//删除缓存
-//			
-//			//通知微信
-//		}
+		else if(msgType.equals(MsgClient2Server.MsgType.change)){//更换充电宝
+			//根据读取redis缓存，根据powerId查找orderId
+			
+			//无缓存key，通知机器弹出
+			
+			//有缓存，获取弹出的充电宝
+			
+			//通知app充电舱编号
+			
+			//app回应开仓后生成新的订单，新orderId，新的充电宝，userId，借出时间
+			
+			//删除缓存
+			
+			//通知微信
+		}
 	}
 	
 	/**
