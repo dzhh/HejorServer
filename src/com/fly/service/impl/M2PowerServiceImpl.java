@@ -59,7 +59,7 @@ public class M2PowerServiceImpl implements M2PowerService {
 	}
 
 	@Override
-	public int updateByM_IdAndC_id(String m_id, Integer c_id) {
+	public int updateByM_IdAndC_id(M2Power record) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -75,4 +75,12 @@ public class M2PowerServiceImpl implements M2PowerService {
 
 	@Resource
 	private M2PowerMapper mapper;
+
+
+	@Override
+	public M2Power selectByM_IdAndC_Id(Integer c_id, String m_id) {
+		// TODO Auto-generated method stub
+		M2Power mPower = mapper.selectByM_IdAndC_Id(c_id, m_id);
+		return mPower;
+	}
 }
