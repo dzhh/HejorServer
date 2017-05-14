@@ -44,6 +44,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		// 消息类型
 		MsgClient2Server.MsgType msgType =  msgReq.getMsgType();
 		
+		//存储连接  存储机器状态   这个地方需要考虑下
+		NettyChannelMap.add(msgReq.getSessionID(), (SocketChannel)ctx.channel());
 		
 		if(msgType.equals(MsgClient2Server.MsgType.mid)) {//验证机器
 			handleMidMsg(ctx, msgReq);
@@ -152,8 +154,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		Machine machine = machineService.selectByPrimaryKey(mId);
 		if(machine != null) {
 			try {
-				//存储连接  存储机器状态
-				NettyChannelMap.add(msgReq.getSessionID(), (SocketChannel)ctx.channel());
+				
 				//返回 ok
 				MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 				builder.setMsgType(MsgServer2Client.MsgType.resp);
