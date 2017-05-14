@@ -8,6 +8,8 @@
     <result column="m_wifi" property="mWifi" jdbcType="INTEGER" />
     <result column="m_4G" property="m4g" jdbcType="INTEGER" />
     <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="initTime" property="initTime" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     m_id, sta_id, m_state, m_wifi, m_4G, id

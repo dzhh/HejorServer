@@ -2,6 +2,7 @@ package com.fly.netty.server.handler;
 
 import java.util.List;
 
+import com.fly.model.M2Power;
 import com.fly.model.Machine;
 import com.fly.model.Order;
 import com.fly.model.User;
@@ -50,23 +51,28 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			handleMidMsg(ctx, msgReq);
 		} else if(msgType.equals(MsgClient2Server.MsgType.init)) {// 初始化 init
 			initMsg(ctx, msgReq);
-			//测试获取spring bean
-			UserService userService = SpringContextUtil.getBean("userServiceImpl");
-			List<User> list = userService.findAll();
-			list.size();
+			//更新机器信息 根据机器m_id在m_power表插入六条数据
+			
+			//充电宝power表里面插入五条数据(初始化时一个机器五个电池)
+			
+			//回应机器app ok表示存储成功
+			
 		} else if(msgType.equals(MsgClient2Server.MsgType.open)) {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.lock)) {
 			//验证订单时间 72小时，一年后无法归还
 			String cId = msgReq.getMachine().getCabin(0).getCId();
 			String powerId = msgReq.getMachine().getCabin(0).getPId();
+			int pCount = msgReq.getMachine().getCabin(0).getPCount();
+			int pQuantity = msgReq.getMachine().getCabin(0).getPQuantity();
+
 			OrderService orderService = SpringContextUtil.getBean("OrderServiceImpl");
 			Order order =  orderService.selectByPowerId(powerId);
 			String outTime = order.getOutTime();
 			int rentHours = CommonUtil.getRentHour(outTime);
 			if(rentHours > 72){
 				
-				//不能归还，只能更换，发送弹出消息 cId
+				//不能归还只能更换，向机器发送弹出消息弹出cId
 			
 			}else{
 				//1、能归还：更新订单，
@@ -75,14 +81,35 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 				
 				//机器关系表，更新信息，填充充电宝，
 				M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerServiceImpl");
-				
+				String m_id = msgReq.getMachine().getMId();
+
+				M2Power mPower = m2PowerService.selectByM_IdAndC_Id(Integer.parseInt(cId), m_id);
 				//根据powerId跟新充电宝电量
+				mPower.setIsempty(0);
+				mPower.setPowerId(powerId);
+				mPower.getPower().setpCount(pCount);
+				mPower.getPower().setpQuantity(pQuantity);
 				
+				//更新
+				int s = m2PowerService.updateByPrimaryKey(mPower);
 				//根据openId微信发送消息(归还成功消息)
 				String openId = order.getUserid();
 				String orderId = order.getOrderId();
 
 				//更新用余额 rentHours * 1 = RMB
+				UserService userService = SpringContextUtil.getBean("userServiceImpl");
+				User usr = userService.selectByPrimaryKey(openId);
+				int balance = usr.getBalance() - rentHours;
+				usr.setBalance(balance);
+				int sucess = userService.updateByPrimaryKey(usr);
+				if(s>0 && sucess>0){
+					//调用微信模板消息接口
+					
+					//回应app "ok"
+				}else{
+					//更新失败 弹出充电宝 发送失败消息
+					
+				}
 				
 			}			
 			
@@ -90,6 +117,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.update)) {//机器自检更新
 			//1、更新数据库
+			
 			
 		} else if(msgType.equals(MsgClient2Server.MsgType.error)) {
 			
@@ -162,6 +190,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		builder.setMsgInfo("ok");
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
+		
 	}
 	
 	@Override

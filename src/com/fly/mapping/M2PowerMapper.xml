@@ -27,6 +27,12 @@
     from m_power
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByM_IdAndC_Id" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from m_power
+    where m_id = #{mId,jdbcType=VARCHAR} and c_id = #{cId,jdbcType=INTEGER}
+  </select>
     <select id="selectByM_Id" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select m.id, m.m_id, m.c_id, m.power_id, m.isEmpty, m.p_lock, m.updateTime, p.power_id, p.is_enable, p.p_quantity, p.p_count, p.is_back, p.id, p.c_id 
    <!-- <include refid="Base_Column_List" /> -->
