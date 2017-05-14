@@ -53,7 +53,7 @@ public class NettyServer {
 
 
 		// 绑定端口，同步等待成功
-        ChannelFuture f= bootstrap.bind(ip, port).sync();
+        ChannelFuture f = bootstrap.bind(ip, port).sync();
 //        ChannelFuture f= bootstrap.bind("0.0.0.0", NettyConstant.PORT).sync();
 //        bootstrap.bind(NettyConstant.REMOTEIP, NettyConstant.PORT).sync();
         if(f.isSuccess()) {
