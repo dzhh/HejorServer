@@ -22,7 +22,8 @@ import io.netty.handler.ssl.SslHandler;
 
 public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInitializer<Channel> {
 
-	private String tlsMode = "CSA";
+//	private String tlsMode = "CSA";
+	private String tlsMode = "CA";
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
@@ -37,7 +38,7 @@ public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInit
 //					    System.getProperty("user.dir") + "/src/com/fly/netty/ssl/sChat.jks",
 //					    System.getProperty("user.dir") + "/src/com/fly/netty/ssl/sChat.jks")
 //				       .createSSLEngine();
-		SSLEngine engine = SecureChatSslContextFactory.getServerContext(tlsMode,
+		SSLEngine engine = SecureChatSslContextFactory.getServerContext(
 						WebUtil.PATH + "WEB-INF/key/sChat.jks",
 						WebUtil.PATH + "WEB-INF/key/sChat.jks")
 				       .createSSLEngine();
