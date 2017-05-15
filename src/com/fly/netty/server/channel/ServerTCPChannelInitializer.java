@@ -22,8 +22,8 @@ import io.netty.handler.ssl.SslHandler;
 
 public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInitializer<Channel> {
 
-//	private String tlsMode = "CSA";
-	private String tlsMode = "CA";
+	private String tlsMode = "CSA";
+//	private String tlsMode = "CA";
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
