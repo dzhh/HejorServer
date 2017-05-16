@@ -15,6 +15,7 @@ public class Order {
 	private Integer isChange;
 	private String mId;
 	private Integer id;
+	private Integer isPay;
 
 	public String getOrderId() {
 		return orderId;
@@ -87,7 +88,6 @@ public class Order {
 	public void setIsChange(Integer isChange) {
 		this.isChange = isChange;
 	}
-
 	public String getmId() {
 		return mId;
 	}
@@ -102,6 +102,14 @@ public class Order {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getIsPay() {
+		return isPay;
+	}
+
+	public void setIsPay(Integer isPay) {
+		this.isPay = isPay;
 	}
 
 }

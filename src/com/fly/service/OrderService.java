@@ -1,5 +1,7 @@
 package com.fly.service;
 
+import java.util.List;
+
 import com.fly.model.Order;
 
 public interface OrderService {
@@ -15,5 +17,8 @@ public interface OrderService {
 
     int updateByPrimaryKey(Order record);
     Order selectByPowerId(String powerId);
+
+    List<Order> selectUnfinishedByUserId(String userId);
+    Order selectUnPayByUserId(String userId);
 
 }

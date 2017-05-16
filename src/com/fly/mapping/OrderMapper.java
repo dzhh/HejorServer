@@ -1,5 +1,7 @@
 package com.fly.mapping;
 
+import java.util.List;
+
 import com.fly.model.Order;
 
 public interface OrderMapper {
@@ -15,5 +17,6 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
     Order selectByPowerId(String powerId);
-
+    List<Order> selectUnfinishedByUserId(String userId);
+    Order selectUnPayByUserId(String userId);
 }

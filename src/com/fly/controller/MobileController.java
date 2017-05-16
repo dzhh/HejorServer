@@ -93,12 +93,15 @@ public class MobileController {
 	    // 接着判断用户
 	    int userState = analyzeUser(userId);
 	    if(userState ==1 && powerInfo !=null){
+	    	
 	    	//通知机器
 	    	modelAndView.addObject("cId", powerInfo.getcId());
 			String json = "";
 			//修改机器关系表状态 (netty 收到回应信息后修改)
+			
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
+			order.setIsPay(1);
 			int resp = orderService.insert(order);
 			if(resp == 1){
 				//返回订单
@@ -108,7 +111,11 @@ public class MobileController {
 		    return json;
 		    
 	    }else if(userState == -1){
-	    	//交押金
+			//生成订单
+			Order order = addOrderForUser(userId, powerInfo);
+			order.setIsPay(0);
+			int resp = orderService.insert(order);
+	    	//交押金,用户有未结束订单
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "0");
 	    	map.put("recharge", "100");
@@ -116,7 +123,25 @@ public class MobileController {
 			String json = JsonUtil.beanToJson(map);
 		    return json;
 		    
+	    }else if(userState == 0){
+	    	//新用户
+			//生成订单
+			Order order = addOrderForUser(userId, powerInfo);
+			order.setIsPay(0);
+			int resp = orderService.insert(order);
+			
+	    	Map<String, String> map = new HashMap<String, String>();
+	    	map.put("req", "0");
+	    	map.put("recharge", "100");
+	    	map.put("msg", "请缴纳押金");
+			String json = JsonUtil.beanToJson(map);
+		    return json;
+	  
 	    }else{
+			//生成订单
+			Order order = addOrderForUser(userId, powerInfo);
+			order.setIsPay(0);
+			
 	    	//充值
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "0");
@@ -151,6 +176,37 @@ public class MobileController {
 			
 		}else{
 			return null;
+		}
+	}
+	/**
+	 * 支付成功后存储用户信息
+	 * @param request  http://127.0.0.1:8080/mobile/paySuccess?openId=&
+	 * @return
+	 */
+	
+	@RequestMapping(value="/mobile/paySuccess",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String paySuccess( @RequestParam(value="openId") String openId, @RequestParam(value="fee") String fee){
+		//查找用户 增加余额
+		User usr = usrService.find(openId);
+		if(usr != null){
+//			usr.setBalance(usr.getBalance() + Integer.valueOf(fee).intValue());
+			//更新用户余额
+
+			//查找未付款订单
+			Order order = orderService.selectUnPayByUserId(openId);
+			order.setIsPay(1);
+			String m_id = order.getmId();
+			String c_id = order.getcId();
+			String powerId = order.getPowerId();
+			
+			//通知app，netty发送消息
+			
+			//订单消息
+			String json = JsonUtil.beanToJson(order);
+			return json;
+		}else{
+			return "error";
 		}
 	}
 	/**
@@ -210,6 +266,7 @@ public class MobileController {
 		order.setIsChange(0);
 		order.setTotalFee(0);
 		order.setOrderState(0);
+		order.setIsPay(0);
 		return order;
 	}
 	
@@ -237,18 +294,31 @@ public class MobileController {
 		
 		int state = -1;
 		User usr = usrService.find(userId);
-		//不存在用户
+
+		//不存在用户 
 		if(usr == null){
-			return -1;
+			//数据库添加用户
+			User newUsr = new User();
+			newUsr.setUserid(userId);
+			usrService.insert(newUsr);
+			return 0;
 		}
 		//拉黑用户
-		
-		//余额判断
-		int balance = usr.getBalance();
-		if(balance > 80){
-			return 1;//发送消息到机器
+
+		//查询未结束租借订单，缴纳100元
+		List<Order> order = orderService.selectUnfinishedByUserId(userId);
+		if( order.size() > 0){
+			
+			return -1;
+	
 		}else{
-			return (100 - balance);
+			//余额判断
+			int balance = usr.getBalance();
+			if(balance > 80){
+				return 1;//发送消息到机器
+			}else{
+				return (100 - balance);
+			}
 		}
 	}
 	

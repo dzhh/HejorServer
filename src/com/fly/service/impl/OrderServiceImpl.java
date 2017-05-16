@@ -1,5 +1,7 @@
 package com.fly.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -60,6 +62,20 @@ public class OrderServiceImpl implements OrderService{
 	public Order selectByPowerId(String powerId) {
 		// TODO Auto-generated method stub
 		Order order = mapper.selectByPowerId(powerId);
+		return order;
+	}
+
+	@Override
+	public List<Order> selectUnfinishedByUserId(String userId) {
+		// TODO Auto-generated method stub
+		List<Order> s = mapper.selectUnfinishedByUserId(userId);
+		return s;
+	}
+
+	@Override
+	public Order selectUnPayByUserId(String userId) {
+		// TODO Auto-generated method stub
+		Order order = mapper.selectUnPayByUserId(userId);
 		return order;
 	}
 
