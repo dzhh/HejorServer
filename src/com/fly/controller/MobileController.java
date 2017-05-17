@@ -120,6 +120,7 @@ public class MobileController {
 	    	map.put("req", "0");
 	    	map.put("recharge", "100");
 	    	map.put("msg", "请缴纳押金");
+	    	map.put("btnName", "缴纳押金");
 			String json = JsonUtil.beanToJson(map);
 		    return json;
 		    
@@ -133,7 +134,8 @@ public class MobileController {
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "0");
 	    	map.put("recharge", "100");
-	    	map.put("msg", "请缴纳押金");
+	    	map.put("msg", "押金随心退，安全速到账");
+	    	map.put("name", "缴纳押金");
 			String json = JsonUtil.beanToJson(map);
 		    return json;
 	  
@@ -141,12 +143,13 @@ public class MobileController {
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
 			order.setIsPay(0);
-			
+			int resp = orderService.insert(order);
 	    	//充值
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "0");
 	    	map.put("msg", "余额不足请充值");
 	    	map.put("recharge", String.valueOf(userState));
+	    	map.put("name", "充值");
 			String json = JsonUtil.beanToJson(map);
 		    return json;
 	    }
@@ -267,6 +270,7 @@ public class MobileController {
 		order.setTotalFee(0);
 		order.setOrderState(0);
 		order.setIsPay(0);
+		order.setcId(Integer.toString(mpower.getcId()));
 		return order;
 	}
 	

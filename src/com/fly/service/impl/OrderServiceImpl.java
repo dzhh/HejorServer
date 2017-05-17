@@ -34,7 +34,8 @@ public class OrderServiceImpl implements OrderService{
 	@Override
 	public int insertSelective(Order record) {
 		// TODO Auto-generated method stub
-		return 0;
+		int s = mapper.insertSelective(record);
+		return s;
 	}
 
 	@Override

@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: zchong
-# Generation Time: 2017-05-06 05:35:31 +0000
+# Generation Time: 2017-05-16 16:23:29 +0000
 # ************************************************************
 
 
@@ -108,6 +108,8 @@ CREATE TABLE `machine` (
   `m_wifi` int(1) NOT NULL,
   `m_4G` int(1) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `initTime` varchar(32) NOT NULL DEFAULT '',
+  `updateTime` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`m_id`),
   KEY `id` (`id`),
   KEY `sta_id` (`sta_id`)
@@ -116,10 +118,10 @@ CREATE TABLE `machine` (
 LOCK TABLES `machine` WRITE;
 /*!40000 ALTER TABLE `machine` DISABLE KEYS */;
 
-INSERT INTO `machine` (`m_id`, `sta_id`, `m_state`, `m_wifi`, `m_4G`, `id`)
+INSERT INTO `machine` (`m_id`, `sta_id`, `m_state`, `m_wifi`, `m_4G`, `id`, `initTime`, `updateTime`)
 VALUES
-	('1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV','',1,1,0,9),
-	('sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog','',0,0,0,10);
+	('1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV','',1,1,0,9,'',NULL),
+	('sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog','',0,0,0,10,'',NULL);
 
 /*!40000 ALTER TABLE `machine` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -141,26 +143,32 @@ CREATE TABLE `order_list` (
   `order_state` int(1) NOT NULL DEFAULT '0',
   `is_change` int(1) NOT NULL DEFAULT '0',
   `m_id` varchar(32) NOT NULL DEFAULT '',
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`order_id`),
-  KEY `id` (`id`),
-  KEY `userId` (`userId`),
-  KEY `m_id` (`m_id`),
-  CONSTRAINT `order_list_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`),
-  CONSTRAINT `order_list_ibfk_2` FOREIGN KEY (`m_id`) REFERENCES `machine` (`m_id`)
+  `id` int(11) DEFAULT NULL,
+  `isPay` int(1) NOT NULL,
+  PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `order_list` WRITE;
 /*!40000 ALTER TABLE `order_list` DISABLE KEYS */;
 
-INSERT INTO `order_list` (`order_id`, `c_id`, `power_id`, `userId`, `out_time`, `back_time`, `total_fee`, `order_state`, `is_change`, `m_id`, `id`)
+INSERT INTO `order_list` (`order_id`, `c_id`, `power_id`, `userId`, `out_time`, `back_time`, `total_fee`, `order_state`, `is_change`, `m_id`, `id`, `isPay`)
 VALUES
-	('1493659527477152',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493659527477',NULL,0,0,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2),
-	('1493709108426563',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493709108426',NULL,0,0,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',3),
-	('1493709339397682',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493709339397',NULL,0,0,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',4);
+	('1493659527477152',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493659527477',NULL,0,0,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,0);
 
 /*!40000 ALTER TABLE `order_list` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table pay_list
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `pay_list`;
+
+CREATE TABLE `pay_list` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 # Dump of table power
@@ -293,6 +301,7 @@ LOCK TABLES `user` WRITE;
 
 INSERT INTO `user` (`userId`, `origin`, `nickname`, `balance`, `sex`, `phone`, `zmxy`, `isChange`, `password`, `headimgurl`, `isBlack`, `creditScore`)
 VALUES
+	('o5UR3xEUrLw3uqh6XfYxmpRva3pA','','奇小怪',20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 	('o5UR3xFIif1N2qtNNc4HHsYxMohg','','C君',100,NULL,'',NULL,NULL,NULL,'http://wx.qlogo.cn/mmopen/hgXWbMaaqmDahBttlaYckrprYryu5e7TvbRMuJeXeHZiaIMsDyiafoP67z2wO7TCcmZCtq2Jgtt6DRn0S2W2KuQMwibEq8icHEQp/0',NULL,NULL);
 
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
