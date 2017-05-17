@@ -80,4 +80,11 @@ public class OrderServiceImpl implements OrderService{
 		return order;
 	}
 
+	@Override
+	public List<Order> getOrdersUserId(String userId) {
+		// TODO Auto-generated method stub
+		List<Order> s = mapper.getOrdersUserId(userId);
+		return s;
+	}
+
 }

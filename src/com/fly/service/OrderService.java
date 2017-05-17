@@ -21,4 +21,6 @@ public interface OrderService {
     List<Order> selectUnfinishedByUserId(String userId);
     Order selectUnPayByUserId(String userId);
 
+    List<Order> getOrdersUserId(String userId);
+
 }

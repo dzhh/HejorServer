@@ -19,4 +19,7 @@ public interface OrderMapper {
     Order selectByPowerId(String powerId);
     List<Order> selectUnfinishedByUserId(String userId);
     Order selectUnPayByUserId(String userId);
+    
+    List<Order> getOrdersUserId(String userId);
+
 }

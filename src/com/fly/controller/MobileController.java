@@ -205,6 +205,8 @@ public class MobileController {
 			
 			//通知app，netty发送消息
 			
+			//存储支付订单信息
+			
 			//订单消息
 			String json = JsonUtil.beanToJson(order);
 			return json;
@@ -273,7 +275,26 @@ public class MobileController {
 		order.setcId(Integer.toString(mpower.getcId()));
 		return order;
 	}
-	
+	/**
+	 * 获取所有用户订单列表
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/mobile/getOrders", method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String getAllUser( @RequestParam(value="openId") String openId){
+//		if(openId == null || openId.length() == 0){
+//			return "error";
+//		}else{
+			List<Order> orders = orderService.getOrdersUserId(openId);
+			if(orders == null || orders.size() == 0){
+				
+				return "error";
+			}
+			String json = JsonUtil.listToJson(orders);
+			return json;
+//		}
+	}
 
 	/**
 	 * 判断充电宝的情况 循环次数最少的

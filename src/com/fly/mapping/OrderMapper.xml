@@ -37,6 +37,12 @@
     from order_list
     where userId = #{userid,jdbcType=VARCHAR} and isPay = #{0,jdbcType=INTEGER}
   </select>
+  <select id="getOrdersUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_list
+    where userId = #{userid,jdbcType=VARCHAR} and isPay = #{1,jdbcType=INTEGER}
+  </select>
   <select id="selectUnfinishedByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
