@@ -16,17 +16,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fly.common.redis.RedisUtil;
 import com.fly.model.M2Power;
 import com.fly.model.Machine;
 import com.fly.model.Order;
 import com.fly.model.User;
+import com.fly.netty.codec.protobuf.MsgServer2Client;
+import com.fly.netty.codec.protobuf.MsgServer2Client.MsgType;
 import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
+import com.fly.service.NettyService;
 import com.fly.service.OrderService;
 import com.fly.service.UserService;
 import com.fly.util.AscPowerComparator;
 import com.fly.util.CommonUtil;
 import com.fly.util.JsonUtil;
+
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 
 
 /**
@@ -50,6 +57,8 @@ public class MobileController {
 	@Autowired
 	private OrderService orderService;
 	
+	@Autowired
+	private NettyService nettyService;
 	
 	/**
 	 * 判断充电宝
@@ -160,12 +169,27 @@ public class MobileController {
 			    return json;
 	    	}else{
 		    	// 未完成  通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
-
-	    		return "success";
+				MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
+				msgReqbuilder.setMsgType(MsgType.change);
+				msgReqbuilder.setMsgInfo(orderId);
+				
+				RedisUtil.putOrder(order.getPowerId(), order);
+				
+	    		ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
+					@Override
+					public void operationComplete(ChannelFuture future) throws Exception {
+						if(future.isSuccess()) {
+							System.out.println("发送成功");
+							//处理记录等
+						} else {
+							//发送失败 处理
+							System.out.println("发送失败");
+						}
+					}
+				};
+	    		nettyService.sendMsg(mId, msgReqbuilder.build(), channelFutureListener);
+	    		return "geng huan zhong";
 	    	}
-	    	
-
-			
 		}else{
 			return "error";
 		}

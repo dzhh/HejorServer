@@ -12,7 +12,7 @@ import com.fly.model.M2Power;
 import com.fly.model.Power;
 import com.fly.service.M2PowerService;
 
-@Service
+@Service("M2PowerService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class M2PowerServiceImpl implements M2PowerService {
 
