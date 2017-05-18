@@ -50,24 +50,6 @@ public class MobileController {
 	@Autowired
 	private OrderService orderService;
 	
-	/**
-	 * 二维码扫描 跳转到指定app(微信、支付宝)
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="/mobile/saomiao",  method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView getDetail(HttpServletRequest request){
-	    ModelAndView modelAndView = new ModelAndView();
-    	modelAndView.addObject("msg", "充电宝数量不足");
-
-//	    String agent = request.getHeader("User-Agent").toLowerCase();
-//	    int way = 0;
-//
-//	    modelAndView.addObject("agent", agent);
-//	    modelAndView.setViewName("/chongzhi");
-	    return modelAndView;
-	}
-	
 	
 	/**
 	 * 判断充电宝
@@ -162,9 +144,9 @@ public class MobileController {
 	 */
 	@RequestMapping(value="/mobile/change",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String getChangePowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="openId") String userId, @RequestParam(value="orderId") String orderId){
+	public String getChangePowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="orderId") String orderId){
 		
-		if(mId !=null&& mId.length()>0 || userId != null&& userId.length()>0  || orderId != null&& orderId.length()>0 ){
+		if(mId !=null&& mId.length()>0 || orderId != null&& orderId.length()>0 ){
 			
 			Order order = orderService.selectByPrimaryKey(orderId);
 	    	Map<String, String> respMap = new HashMap<String, String>();
@@ -172,13 +154,20 @@ public class MobileController {
 	    	int powerNum = getPowerNum(mId);
 	    	if(powerNum == 0 || powerNum == 6){
 	    		//无空仓还，没有可借的
+	    		respMap.put("req", "0");
+	    		respMap.put("msg", "该机器没有可更换的充电宝");
+				String json = JsonUtil.beanToJson(respMap);
+			    return json;
+	    	}else{
+		    	// 未完成  通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
+
+	    		return "success";
 	    	}
-	    	//通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
 	    	
-			return null;
+
 			
 		}else{
-			return null;
+			return "error";
 		}
 	}
 	/**

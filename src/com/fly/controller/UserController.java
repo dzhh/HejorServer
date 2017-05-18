@@ -32,7 +32,7 @@ public class UserController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/user/{userId}", method = {RequestMethod.GET, RequestMethod.POST} ,produces = "text/html;charset=UTF-8")
+	@RequestMapping(value = "/mobile/user/{userId}", method = {RequestMethod.GET, RequestMethod.POST} ,produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getUser(@PathVariable("userId") String userId){
 		User user = userService.find(userId);
