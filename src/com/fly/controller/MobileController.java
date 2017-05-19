@@ -76,10 +76,9 @@ public class MobileController {
 	    int userState = analyzeUser(userId);
 	    if(userState ==1 && powerInfo !=null){
 	    	
-	    	//通知机器
-	    	modelAndView.addObject("cId", powerInfo.getcId());
+	    	//未完成 netty通知机器
 			String json = "";
-			//修改机器关系表状态 (netty 收到回应信息后修改)
+			//未完成 修改机器关系表状态 (netty 收到回应信息后修改)
 			
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
@@ -160,12 +159,11 @@ public class MobileController {
 			    return json;
 	    	}else{
 		    	// 未完成  通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
-
+	    		String powerId = order.getPowerId();
+	    		
 	    		return "success";
 	    	}
-	    	
 
-			
 		}else{
 			return "error";
 		}
@@ -272,15 +270,14 @@ public class MobileController {
 	@RequestMapping(value="/mobile/getOrders", method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getAllUser( @RequestParam(value="openId") String openId){
-//		if(openId == null || openId.length() == 0){
-//			return "error";
-//		}else{
 			List<Order> orders = orderService.getOrdersUserId(openId);
 			if(orders == null || orders.size() == 0){
-				
 				return "error";
 			}
-			String json = JsonUtil.listToJson(orders);
+	    	Map<String, List> map = new HashMap<String, List>();
+			map.put("orderList", orders);
+			String json = JsonUtil.beanToJson(map);
+//			String json = JsonUtil.listToJson(orders);
 			return json;
 //		}
 	}
