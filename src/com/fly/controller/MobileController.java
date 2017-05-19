@@ -277,7 +277,6 @@ public class MobileController {
 	    	Map<String, List> map = new HashMap<String, List>();
 			map.put("orderList", orders);
 			String json = JsonUtil.beanToJson(map);
-//			String json = JsonUtil.listToJson(orders);
 			return json;
 //		}
 	}
