@@ -5,6 +5,7 @@ import java.util.List;
 import com.fly.model.Order;
 
 public interface OrderService {
+	
     int deleteByPrimaryKey(String orderId);
 
     int insert(Order record);
@@ -16,9 +17,11 @@ public interface OrderService {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+    
     Order selectByPowerId(String powerId);
 
     List<Order> selectUnfinishedByUserId(String userId);
+    
     Order selectUnPayByUserId(String userId);
 
     List<Order> getOrdersUserId(String userId);

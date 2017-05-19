@@ -25,6 +25,7 @@ public final class SecureChatSslContextFactory {
 		    InputStream in = null;
 		    InputStream tIN = null;
 		    try {
+		    	// 初始化密钥库 
 				KeyManagerFactory kmf = null;
 				if (pkPath != null) {
 				    KeyStore ks = KeyStore.getInstance("JKS");
@@ -33,6 +34,8 @@ public final class SecureChatSslContextFactory {
 				    kmf = KeyManagerFactory.getInstance("SunX509");
 				    kmf.init(ks, "sNetty".toCharArray());
 				}
+				
+				// 初始化信任库  
 				TrustManagerFactory tf = null;
 				if (caPath != null) {
 				    KeyStore tks = KeyStore.getInstance("JKS");
