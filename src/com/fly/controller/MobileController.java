@@ -177,21 +177,8 @@ public class MobileController {
 				msgReqbuilder.setMsgType(MessageType.MsgType.change);
 				msgReqbuilder.setMsgInfo(orderId);
 				
-				RedisUtil.putOrder(order.getPowerId(), order);
-				
-	    		ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
-					@Override
-					public void operationComplete(ChannelFuture future) throws Exception {
-						if(future.isSuccess()) {
-							System.out.println("发送成功");
-							//处理记录等
-						} else {
-							//发送失败 处理
-							System.out.println("发送失败");
-						}
-					}
-				};
-	    		nettyService.sendMsg(mId, msgReqbuilder.build(), channelFutureListener);
+				RedisUtil.putChangeOrder(order.getPowerId(), order);
+	    		nettyService.sendMsg(mId, msgReqbuilder.build(), null);
 	    		return "geng huan zhong";
 	    	}
 		}else{
@@ -246,23 +233,36 @@ public class MobileController {
 			String outTime= order.getOutTime();
 			int rentHours = CommonUtil.getRentHour(outTime);
 	    	Map<String, String> map = new HashMap<String, String>();
-			if(rentHours < 48){
-		    	map.put("req", "-1");
-		    	map.put("msg", "租借未超过48小时，无法更换");
-				String json = JsonUtil.beanToJson(map);
-			    return json;
-			}else if(rentHours > 8760){
-				//超过一年无法更换
-		    	map.put("req", "-1");
-		    	map.put("msg", "租借已经超过一年，无法更换");
-				String json = JsonUtil.beanToJson(map);
-			    return json;
-			}else{
-		    	map.put("req", "1");
+	    	if(isChange ==1) {
+	    		map.put("req", "1");
 		    	map.put("msg", "更换");
 				String json = JsonUtil.beanToJson(map);
 			    return json;
-			}
+	    	} else {
+	    		if(rentHours < 48){
+			    	map.put("req", "-1");
+			    	map.put("msg", "租借未超过48小时，无法更换");
+					String json = JsonUtil.beanToJson(map);
+				    return json;
+				}else if(rentHours > 8760){
+					//超过一年无法更换
+			    	map.put("req", "-1");
+			    	map.put("msg", "租借已经超过一年，无法更换");
+					String json = JsonUtil.beanToJson(map);
+				    return json;
+				}else{
+					//扣费
+					String openId = order.getUserid();
+					User usr = usrService.selectByPrimaryKey(openId);
+					int balance = usr.getBalance() - 100;
+					usr.setBalance(balance);
+					int sucess = usrService.updateByPrimaryKey(usr);
+			    	map.put("req", "1");
+			    	map.put("msg", "更换");
+					String json = JsonUtil.beanToJson(map);
+				    return json;
+				}
+	    	}
 		}else{
 			return null;
 		}

@@ -25,12 +25,14 @@
     from order_list
     where order_id = #{orderId,jdbcType=VARCHAR}
   </select>
-    <select id="selectByPowerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  
+   <select id="selectByPowerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from order_list
-    where power_id = #{powerId,jdbcType=VARCHAR} 
+    where power_id = #{powerId,jdbcType=VARCHAR} and order_state = #{0,jdbcType=INTEGER}
   </select>
+  
   <select id="selectUnPayByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />

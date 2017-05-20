@@ -89,6 +89,17 @@ public final class MessageType {
     change(109),
     /**
      * <pre>
+     * </pre>
+     *
+     * <code>change_back_ok = 110;</code>
+     */
+    change_back_ok(110),
+    /**
+     * <code>change_back_error = 111;</code>
+     */
+    change_back_error(111),
+    /**
+     * <pre>
      *服务器返回机器码认证成功
      * </pre>
      *
@@ -296,6 +307,17 @@ public final class MessageType {
     public static final int change_VALUE = 109;
     /**
      * <pre>
+     * </pre>
+     *
+     * <code>change_back_ok = 110;</code>
+     */
+    public static final int change_back_ok_VALUE = 110;
+    /**
+     * <code>change_back_error = 111;</code>
+     */
+    public static final int change_back_error_VALUE = 111;
+    /**
+     * <pre>
      *服务器返回机器码认证成功
      * </pre>
      *
@@ -460,6 +482,8 @@ public final class MessageType {
         case 107: return heat;
         case 108: return req;
         case 109: return change;
+        case 110: return change_back_ok;
+        case 111: return change_back_error;
         case 201: return mid_ok;
         case 202: return init_ok;
         case 203: return open_ok;
@@ -539,18 +563,19 @@ public final class MessageType {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021MessageType.proto*\215\003\n\007MsgType\022\010\n\004zero\020" +
+      "\n\021MessageType.proto*\270\003\n\007MsgType\022\010\n\004zero\020" +
       "\000\022\007\n\003mid\020e\022\010\n\004init\020f\022\010\n\004open\020g\022\010\n\004lock\020h" +
       "\022\t\n\005error\020i\022\n\n\006update\020j\022\010\n\004heat\020k\022\007\n\003req" +
-      "\020l\022\n\n\006change\020m\022\013\n\006mid_ok\020\311\001\022\014\n\007init_ok\020\312" +
-      "\001\022\014\n\007open_ok\020\313\001\022\014\n\007lock_ok\020\314\001\022\r\n\010error_o" +
-      "k\020\315\001\022\016\n\tupdate_ok\020\316\001\022\014\n\007heat_ok\020\317\001\022\013\n\006re" +
-      "q_ok\020\320\001\022\016\n\tchange_ok\020\321\001\022\016\n\tmid_error\020\221\003\022" +
-      "\017\n\ninit_error\020\222\003\022\017\n\nopen_error\020\223\003\022\017\n\nloc" +
-      "k_error\020\224\003\022\020\n\013error_error\020\225\003\022\021\n\014update_e" +
-      "rror\020\226\003\022\017\n\nheat_error\020\227\003\022\016\n\treq_error\020\230\003",
-      "\022\021\n\014change_error\020\231\003B+\n\034com.fly.netty.cod" +
-      "ec.protobufB\013MessageTypeb\006proto3"
+      "\020l\022\n\n\006change\020m\022\022\n\016change_back_ok\020n\022\025\n\021ch" +
+      "ange_back_error\020o\022\013\n\006mid_ok\020\311\001\022\014\n\007init_o" +
+      "k\020\312\001\022\014\n\007open_ok\020\313\001\022\014\n\007lock_ok\020\314\001\022\r\n\010erro" +
+      "r_ok\020\315\001\022\016\n\tupdate_ok\020\316\001\022\014\n\007heat_ok\020\317\001\022\013\n" +
+      "\006req_ok\020\320\001\022\016\n\tchange_ok\020\321\001\022\016\n\tmid_error\020" +
+      "\221\003\022\017\n\ninit_error\020\222\003\022\017\n\nopen_error\020\223\003\022\017\n\n" +
+      "lock_error\020\224\003\022\020\n\013error_error\020\225\003\022\021\n\014updat",
+      "e_error\020\226\003\022\017\n\nheat_error\020\227\003\022\016\n\treq_error" +
+      "\020\230\003\022\021\n\014change_error\020\231\003B+\n\034com.fly.netty." +
+      "codec.protobufB\013MessageTypeb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

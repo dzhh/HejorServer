@@ -14,6 +14,8 @@ enum MsgType{
   heat = 107;//心跳
   req = 108;
   change = 109;
+  change_back_ok = 110;//
+  change_back_error = 111;
   
   mid_ok = 201;//服务器返回机器码认证成功
   init_ok = 202;//初始化信息成功  

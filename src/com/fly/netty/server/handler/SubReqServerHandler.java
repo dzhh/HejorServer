@@ -1,6 +1,7 @@
 package com.fly.netty.server.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fly.common.redis.RedisUtil;
@@ -20,6 +21,7 @@ import com.fly.service.MachineService;
 import com.fly.service.OrderService;
 import com.fly.service.PowerService;
 import com.fly.service.UserService;
+import com.fly.util.AscPowerComparator;
 import com.fly.util.CommonUtil;
 import com.fly.util.SpringContextUtil;
 
@@ -57,36 +59,126 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		} else if(msgType.equals(MessageType.MsgType.open_ok)) { //弹出成功
 			openOkMsg(ctx, msgReq);
 		} else if(msgType.equals(MessageType.MsgType.open_error)) { //弹出失败
-			
-		} else if(msgType.equals(MessageType.MsgType.lock)) {
+			openErrorMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.lock)) { //归还充电宝
 			lockMsg(ctx, msgReq);
-					
-			
 		} else if(msgType.equals(MessageType.MsgType.heat)) {
 			
 		} else if(msgType.equals(MessageType.MsgType.update)) {//机器自检更新
 			//1、更新数据库
-			
-			
+			updateMsg(ctx, msgReq);
 		} else if(msgType.equals(MessageType.MsgType.error)) {
-			
+			errorMsg(ctx, msgReq);
 			//机器自检报错
 		}
 		else if(msgType.equals(MessageType.MsgType.change)){//更换充电宝
 			changeMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.change_back_ok)){//更换充电宝弹出成功
+			changeBackOkMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.change_back_error)){//更换充电宝弹出失败
+			changeBackErrorMsg(ctx, msgReq);
 		}
 	}
 	
 	/**
-	 * 弹出成功
+	 * 
 	 * @param ctx
 	 * @param msgReq
 	 */
-	private void openOkMsg(ChannelHandlerContext ctx, Msg msgReq) {
+	private void errorMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		//故障处理
+	}
+
+	/**
+	 * 更新机器 充电宝信息
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void updateMsg(ChannelHandlerContext ctx, Msg msg) {
+		//更新机器信息 根据机器m_id在m_power表插入六条数据
+		//
+		List<Cabin> cabinList = msg.getMachine().getCabinList();
+		
+//		List<M2Power> m2PowerList = new ArrayList<M2Power>();
+		List<Power> powerList = new ArrayList<Power>();
+		for(Cabin cabin : cabinList) {
+//			M2Power m2Power = new M2Power();
+//			m2Power.setmId(msg.getMachine().getMId());
+//			m2Power.setcId(cabin.getCId());
+//			m2Power.setPowerId(cabin.getPId());
+//			m2Power.setpLock(cabin.getPLock());
+//			//存储时间
+//			m2Power.setUpdateTime(Long.toString(System.currentTimeMillis()));
+//			m2PowerList.add(m2Power);
+			
+			Power power = new Power();
+			power.setPowerId(cabin.getPId());
+			power.setpQuantity(cabin.getPQuantity());
+			power.setpCount(cabin.getPCount());
+			powerList.add(power);
+		}
+		int m_result = 0;
+		
+		//充电宝power表里面更新数据
+		PowerService powerService = SpringContextUtil.getBean("PowerService");
+		m_result = powerService.updateByPowerList(powerList);
+//		if(m_result == 1) {
+			//更新机器信息
+//			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
+//			m_result = m2PowerService.updateRecordByMidAndCid(m2PowerList);
+//		}
+		
+		//回应机器app ok表示存储成功
+		//返回 ok
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		if(m_result == 1) {
+			builder.setMsgType(MessageType.MsgType.update_ok);
+			builder.setMsgInfo("update ok");
+		} else {
+			builder.setMsgType(MessageType.MsgType.update_error);
+			builder.setMsgInfo("update error");
+		}
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+		
+	}
+
+	private void changeBackErrorMsg(ChannelHandlerContext ctx, Msg msgReq) {
 		String powerId = msgReq.getPId();
 		int cid = msgReq.getCId();
 		//取出订单
 		Order order = RedisUtil.getOrder(powerId);
+		//4 代表订单失败
+		order.setOrderState(4);
+		
+		//更新订单 order
+		OrderService orderService = SpringContextUtil.getBean("OrderService");
+		orderService.updateByPrimaryKey(order);
+		
+		//微信发消息
+
+
+		//给app发送消息
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.change_back_error);
+		builder.setMsgInfo("change back error");
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+		//清理 order缓存 
+		RedisUtil.removeOrder(powerId);
+	}
+
+	/**
+	 * 
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void changeBackOkMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		String powerId = msgReq.getPId();
+		int cid = msgReq.getCId();
+		//取出订单
+		Order order = RedisUtil.getOrder(powerId);
+		//订单成功  已开始
 		order.setOrderState(0);
 		//弹出时间
 		order.setOutTime(Long.toString(System.currentTimeMillis()));
@@ -100,31 +192,166 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		//微信发消息
 		
+		
+		
+		//给app发送消息
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.change_back_ok);
+		builder.setMsgInfo("change_back_ok sucess");
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+		//清理 order缓存 
+		RedisUtil.removeOrder(powerId);
+	}
+
+	/**
+	 * 弹出失败
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void openErrorMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		String powerId = msgReq.getPId();
+		int cid = msgReq.getCId();
+		//取出订单
+		Order order = RedisUtil.getOrder(powerId);
+		//4 代表订单失败
+		order.setOrderState(4);
+		
+		//更新订单 order
+		OrderService orderService = SpringContextUtil.getBean("OrderService");
+		orderService.updateByPrimaryKey(order);
+		
+		//微信发消息
+
+
+		//给app发送消息
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.open_error);
+		builder.setMsgInfo("open error");
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+		//清理 order缓存 
+		RedisUtil.removeOrder(powerId);
+	}
+
+	/**
+	 * 弹出成功
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void openOkMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		String powerId = msgReq.getPId();
+		int cid = msgReq.getCId();
+		//取出订单
+		Order order = RedisUtil.getOrder(powerId);
+		//订单成功  已开始
+		order.setOrderState(0);
+		//弹出时间
+		order.setOutTime(Long.toString(System.currentTimeMillis()));
+		//更新订单 order
+		OrderService orderService = SpringContextUtil.getBean("OrderService");
+		orderService.updateByPrimaryKey(order);
+		
+		//更新机器充电宝关系表mpower
+		M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
+		m2PowerService.updateByPowerId(order.getPowerId());
+		
+		//微信发消息
+		
+		
+		
+		//给app发送消息
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.open_ok);
+		builder.setMsgInfo("open sucess");
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+		//清理 order缓存 
+		RedisUtil.removeOrder(powerId);
 	}
 
 	private void changeMsg(ChannelHandlerContext ctx, Msg msgReq) {
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 		//根据读取redis缓存，根据powerId查找orderId
 		String powerId = msgReq.getMachine().getCabin(0).getPId();
+		int cid = msgReq.getMachine().getCabin(0).getCId();
 		Order order = RedisUtil.getOrder(powerId);
 		
 		//无缓存key，通知机器弹出
 		if(order == null) {
+			builder.setMsgType(MessageType.MsgType.change_error);
+			builder.setCId(cid);
+			builder.setMsgInfo("change error");
+			//向微信发消息
+			
 			
 		} else {
-		//有缓存，获取弹出的充电宝
-		
-			
+			//有缓存，获取弹出的充电宝
+			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
+		    List<M2Power> powerList = m2PowerService.selectByM_Id(order.getmId());
+		    M2Power newMpower = getPower(powerList);
+		    
+			//app回应开仓后生成新的订单，新orderId，新的充电宝，userId，借出时间
+	    	Order newOrder = addOrderForUser(order.getUserid(), newMpower);
+	    	newOrder.setIsPay(1);
+	    	
+			OrderService orderService = SpringContextUtil.getBean("OrderService");
+	    	orderService.insert(order);
+	    	
+		    //netty通知机器通知app充电舱编号
+	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.change_ok);
+	    	msgReqbuilder.setCId(newMpower.getcId());
+	    	RedisUtil.putOrder(newMpower.getPowerId(), newOrder);
 		}
-		//通知app充电舱编号
 		
-		//app回应开仓后生成新的订单，新orderId，新的充电宝，userId，借出时间
-		
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
 		//删除缓存
 		RedisUtil.removeOrder(powerId);
-		//通知微信
 	}
-
+	
+	/**
+	 * 新建租赁订单
+	 * @param 
+	 * @return
+	 */
+	private Order addOrderForUser(String userId, M2Power mpower){
+		Order order = new Order();
+		String timeStr = Long.toString(System.currentTimeMillis());
+		int num = (int)(Math.random()*1000);
+		String orderId = timeStr + num;
+		order.setOrderId(orderId);
+		order.setUserid(userId);
+		order.setmId(mpower.getmId());
+		order.setPowerId(mpower.getPowerId());
+		order.setmId(mpower.getmId());
+//		order.setOutTime(timeStr);
+		order.setIsChange(1);
+		order.setTotalFee(0);
+		order.setOrderState(2);
+		order.setIsPay(0);
+		order.setcId(Integer.toString(mpower.getcId()));
+		return order;
+	}
+	
+	/**
+	 * 判断充电宝的情况 循环次数最少的
+	 * @param 
+	 * @return
+	 */
+	private M2Power getPower(List<M2Power> powerList){
+		List<M2Power> newpower = new ArrayList<M2Power>();
+        for (M2Power mpower : powerList) {
+            if(mpower.getPower().getpQuantity()> 50){
+            	newpower.add(mpower);
+            }
+        }
+		Collections.sort(newpower, new AscPowerComparator());
+		M2Power p = newpower.get(0);
+		return p;
+	}
+	
 	private void lockMsg(ChannelHandlerContext ctx, Msg msgReq) {
 		//验证订单时间 72小时，一年后无法归还
 		int cId = msgReq.getMachine().getCabin(0).getCId();
@@ -133,13 +360,17 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		int pQuantity = msgReq.getMachine().getCabin(0).getPQuantity();
 
 		OrderService orderService = SpringContextUtil.getBean("OrderService");
-		Order order =  orderService.selectByPowerId(powerId);
+		Order order = orderService.selectByPowerId(powerId);
 		String outTime = order.getOutTime();
 		int rentHours = CommonUtil.getRentHour(outTime);
-		if(rentHours > 72){
-			
-			//不能归还只能更换，向机器发送弹出消息弹出cId
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 		
+		if(rentHours > 72 || order.getIsChange() ==1) {
+			//不能归还只能更换，向机器发送弹出消息弹出cId
+			builder.setMsgType(MessageType.MsgType.lock_error);
+			builder.setMsgInfo("lock error");//机器弹出充电宝
+			//给微信发消息
+			
 		}else{
 			//1、能归还：更新订单，
 			order.setOrderState(1);
@@ -151,32 +382,49 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 
 			M2Power mPower = m2PowerService.selectByM_IdAndC_Id(cId, m_id);
 			//根据powerId跟新充电宝电量
-			mPower.setIsempty(0);
+			mPower.setIsempty(1);
 			mPower.setPowerId(powerId);
 			mPower.getPower().setpCount(pCount);
 			mPower.getPower().setpQuantity(pQuantity);
 			
 			//更新
 			int s = m2PowerService.updateByPrimaryKey(mPower);
-			//根据openId微信发送消息(归还成功消息)
-			String openId = order.getUserid();
-			String orderId = order.getOrderId();
-
-			//更新用余额 rentHours * 1 = RMB
-			UserService userService = SpringContextUtil.getBean("UserService");
-			User usr = userService.selectByPrimaryKey(openId);
-			int balance = usr.getBalance() - rentHours;
-			usr.setBalance(balance);
-			int sucess = userService.updateByPrimaryKey(usr);
-			if(s>0 && sucess>0){
-				//调用微信模板消息接口
-				
-				//回应app "ok"
-			}else{
+			//mpower  关系表更新成功 
+			if(s == 1) {
+				//根据openId微信发送消息(归还成功消息)
+				String openId = order.getUserid();
+				String orderId = order.getOrderId();
+				//更新用余额 rentHours * 1 = RMB
+				UserService userService = SpringContextUtil.getBean("UserService");
+				User usr = userService.selectByPrimaryKey(openId);
+				int balance = usr.getBalance() - rentHours;
+				usr.setBalance(balance);
+				int sucess = userService.updateByPrimaryKey(usr);
+				if(sucess == 1) {
+					//调用微信模板消息接口
+					
+					//回应app "ok"
+					builder.setMsgType(MessageType.MsgType.lock_ok);
+					builder.setMsgInfo("lock sucess");
+				} else {
+					//回滚
+					mPower.setIsempty(0);
+					m2PowerService.updateByPowerId(powerId);
+					//更新失败 弹出充电宝 发送失败消息
+					builder.setMsgType(MessageType.MsgType.lock_error);
+					builder.setMsgInfo("lock error");//机器弹出充电宝
+				}
+			} else {
 				//更新失败 弹出充电宝 发送失败消息
+				builder.setMsgType(MessageType.MsgType.lock_error);
+				builder.setMsgInfo("lock error");//机器弹出充电宝
+				
+				//调用微信模板消息接口
 				
 			}
 			
+			MsgServer2Client.Msg msgResp = builder.build();
+			ctx.writeAndFlush(msgResp);
 		}	
 	}
 
@@ -241,6 +489,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			m2Power.setPowerId(cabin.getPId());
 			m2Power.setpLock(cabin.getPLock());
 			//存储时间
+			m2Power.setUpdateTime(Long.toString(System.currentTimeMillis()));
 			m2PowerList.add(m2Power);
 			
 			Power power = new Power();
