@@ -11,7 +11,7 @@ import com.fly.mapping.OrderMapper;
 import com.fly.model.Order;
 import com.fly.service.OrderService;
 
-@Service
+@Service("OrderService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class OrderServiceImpl implements OrderService{
 	

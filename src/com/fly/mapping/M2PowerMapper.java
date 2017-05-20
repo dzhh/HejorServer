@@ -25,4 +25,6 @@ public interface M2PowerMapper {
 	int insertList(List<M2Power> recordList);
 
 	int updateRecordByMidAndCid(List<M2Power> recordList);
+
+	int updateByPowerId(String powerId);
 }

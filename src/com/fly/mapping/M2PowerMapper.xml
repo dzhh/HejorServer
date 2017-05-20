@@ -144,6 +144,13 @@
     where m_id = #{m_id,jdbcType=VARCHAR} and c_id = #{c_id,jdbcType=INTEGER}
   </update>
   
+  <update id="updateByPowerId" parameterType="java.lang.String">
+    update m_power
+    set power_id = '' 
+    where power_id = #{powerId,jdbcType=VARCHAR}
+  </update>
+  
+  
     <update id="updateRecordByMidAndCid" parameterType="java.util.List">
          <foreach collection="list" item="item" index="index" open="" close="" separator=";"> 
 		    update m_power

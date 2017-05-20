@@ -26,5 +26,8 @@ message Msg {
   string sessionID = 2; //会话ID
   Machine machine = 3;//机器
   string msgInfo = 4;//消息描述
+  string p_id = 5;//充电宝编号
+  int32 c_id = 6;//机舱编号
+  
   
 }

@@ -23,6 +23,7 @@ import com.fly.model.Order;
 import com.fly.model.User;
 import com.fly.netty.codec.protobuf.MessageType;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
+import com.fly.netty.server.NettyChannelMap;
 import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
 import com.fly.service.NettyService;
@@ -32,6 +33,7 @@ import com.fly.util.AscPowerComparator;
 import com.fly.util.CommonUtil;
 import com.fly.util.JsonUtil;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
@@ -61,18 +63,15 @@ public class MobileController {
 	private NettyService nettyService;
 	
 	/**
-	 * 判断充电宝
+	 * 判断充电宝 租用
+	 * openId 用户id  
+	 * m_id 机器编码
 	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg
 	 * @return
 	 */
 	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getPowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="openId") String userId){
-	    ModelAndView modelAndView = new ModelAndView();	
-	    //判断充电宝情况
-//	    String mId = (String) request.getAttribute("m_id");
-//	    String userId = (String) request.getAttribute("openId");
-
 	    M2Power powerInfo = analyzeMachine(mId);
 	    if(powerInfo == null) {
 	    	Map<String, String> map = new HashMap<String, String>();
@@ -83,9 +82,15 @@ public class MobileController {
 	    }
 	    // 接着判断用户
 	    int userState = analyzeUser(userId);
+	    
 	    if(userState ==1 && powerInfo !=null){
+	    	//netty通知机器
+	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.open);
+	    	msgReqbuilder.setCId(powerInfo.getcId());
+			//发送消息
+	    	nettyService.sendMsg(mId, msgReqbuilder.build(), null);
 	    	
-	    	//未完成 netty通知机器
 			String json = "";
 			//未完成 修改机器关系表状态 (netty 收到回应信息后修改)
 			
@@ -94,8 +99,8 @@ public class MobileController {
 			order.setIsPay(1);
 			int resp = orderService.insert(order);
 			if(resp == 1){
-				//返回订单
-//				request.setAttribute("order", order);
+				//保存下orderid 和 powerid的关系
+				RedisUtil.putOrder(order.getPowerId(), order);
 				json = JsonUtil.beanToJson(order);
 			}
 		    return json;
@@ -279,10 +284,10 @@ public class MobileController {
 		order.setmId(mpower.getmId());
 		order.setPowerId(mpower.getPowerId());
 		order.setmId(mpower.getmId());
-		order.setOutTime(timeStr);
+//		order.setOutTime(timeStr);
 		order.setIsChange(0);
 		order.setTotalFee(0);
-		order.setOrderState(0);
+		order.setOrderState(2);
 		order.setIsPay(0);
 		order.setcId(Integer.toString(mpower.getcId()));
 		return order;
@@ -312,9 +317,6 @@ public class MobileController {
 	 * @return
 	 */
 	private M2Power getPower(List<M2Power> powerList){
-		if(powerList.size() <=0){
-			return null;
-		}
 		List<M2Power> newpower = new ArrayList<M2Power>();
         for (M2Power mpower : powerList) {
             if(mpower.getPower().getpQuantity()> 50){
@@ -322,9 +324,15 @@ public class MobileController {
             }
         }
 		Collections.sort(newpower, new AscPowerComparator());
-		M2Power p = powerList.get(0);
+		M2Power p = newpower.get(0);
 		return p;
 	}
+	
+	/**
+	 * 判断用户是否可借
+	 * @param userId
+	 * @return
+	 */
 	private int analyzeUser(String userId){
 		
 		int state = -1;
@@ -365,22 +373,25 @@ public class MobileController {
 	 */
 	private M2Power analyzeMachine(String mId) {
 		M2Power mpower = null;
-		//1. 判断机器是否联网 根据nutty
-//		Channel channel = NettyChannelMap.getSocketChannel(mId);
-//		if(channel == null) {
-//			state = -1;
-//		}
-		//数据库查询判断机器状态
-		Machine machine = machineService.selectByPrimaryKey(mId);
 		int mstate = 0;
-		if(machine != null) {
-			mstate = machine.getmState();
-			if(mstate == 0){
-				return null;
-			}
+		//1. 判断机器是否联网 根据nutty
+		Channel channel = NettyChannelMap.getSocketChannel(mId);
+		if(channel == null) {
+			mstate = -1;
 		} else {
-			return null;
+			mstate = 1;
 		}
+		//数据库查询判断机器状态
+//		Machine machine = machineService.selectByPrimaryKey(mId);
+//		int mstate = 0;
+//		if(machine != null) {
+//			mstate = machine.getmState();
+//			if(mstate == 0){
+//				return null;
+//			}
+//		} else {
+//			return null;
+//		}
 
 		
 		//2. 判断机器充电宝数量 查询数据库或者缓存

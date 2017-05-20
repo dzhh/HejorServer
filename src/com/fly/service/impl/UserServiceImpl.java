@@ -17,7 +17,7 @@ import com.fly.service.UserService;
  * 类说明
  */
 
-@Service("userServiceImpl")
+@Service("UserService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class UserServiceImpl implements UserService {
 	

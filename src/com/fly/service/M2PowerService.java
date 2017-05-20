@@ -31,4 +31,6 @@ public interface M2PowerService {
 	
 	int updateRecordByMidAndCid(List<M2Power> recordList);
 
+	int updateByPowerId(String powerId);
+
 }

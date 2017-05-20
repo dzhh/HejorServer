@@ -38,7 +38,7 @@ public class NettyController {
 	public String sendMeassage(HttpServletRequest request) {
 		String msgType = request.getParameter("msgType");
 		String sessonId = request.getParameter("sessonID");
-		String cID = request.getParameter("cID");
+		int cID = Integer.parseInt(request.getParameter("cID"));
 		
 		if(msgType.equals("open")) {
 			MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();

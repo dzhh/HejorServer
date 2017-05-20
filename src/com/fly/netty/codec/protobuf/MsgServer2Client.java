@@ -76,18 +76,9 @@ public final class MsgServer2Client {
      *机舱编号
      * </pre>
      *
-     * <code>string c_id = 4;</code>
+     * <code>int32 c_id = 4;</code>
      */
-    java.lang.String getCId();
-    /**
-     * <pre>
-     *机舱编号
-     * </pre>
-     *
-     * <code>string c_id = 4;</code>
-     */
-    com.google.protobuf.ByteString
-        getCIdBytes();
+    int getCId();
   }
   /**
    * Protobuf type {@code Msg}
@@ -104,7 +95,7 @@ public final class MsgServer2Client {
       msgType_ = 0;
       sessionID_ = "";
       msgInfo_ = "";
-      cId_ = "";
+      cId_ = 0;
     }
 
     @java.lang.Override
@@ -150,10 +141,9 @@ public final class MsgServer2Client {
               msgInfo_ = s;
               break;
             }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 32: {
 
-              cId_ = s;
+              cId_ = input.readInt32();
               break;
             }
           }
@@ -288,45 +278,16 @@ public final class MsgServer2Client {
     }
 
     public static final int C_ID_FIELD_NUMBER = 4;
-    private volatile java.lang.Object cId_;
+    private int cId_;
     /**
      * <pre>
      *机舱编号
      * </pre>
      *
-     * <code>string c_id = 4;</code>
+     * <code>int32 c_id = 4;</code>
      */
-    public java.lang.String getCId() {
-      java.lang.Object ref = cId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        cId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     *机舱编号
-     * </pre>
-     *
-     * <code>string c_id = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getCIdBytes() {
-      java.lang.Object ref = cId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        cId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getCId() {
+      return cId_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -350,8 +311,8 @@ public final class MsgServer2Client {
       if (!getMsgInfoBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, msgInfo_);
       }
-      if (!getCIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, cId_);
+      if (cId_ != 0) {
+        output.writeInt32(4, cId_);
       }
     }
 
@@ -370,8 +331,9 @@ public final class MsgServer2Client {
       if (!getMsgInfoBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, msgInfo_);
       }
-      if (!getCIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, cId_);
+      if (cId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, cId_);
       }
       memoizedSize = size;
       return size;
@@ -394,8 +356,8 @@ public final class MsgServer2Client {
           .equals(other.getSessionID());
       result = result && getMsgInfo()
           .equals(other.getMsgInfo());
-      result = result && getCId()
-          .equals(other.getCId());
+      result = result && (getCId()
+          == other.getCId());
       return result;
     }
 
@@ -413,7 +375,7 @@ public final class MsgServer2Client {
       hash = (37 * hash) + MSGINFO_FIELD_NUMBER;
       hash = (53 * hash) + getMsgInfo().hashCode();
       hash = (37 * hash) + C_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getCId().hashCode();
+      hash = (53 * hash) + getCId();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -538,7 +500,7 @@ public final class MsgServer2Client {
 
         msgInfo_ = "";
 
-        cId_ = "";
+        cId_ = 0;
 
         return this;
       }
@@ -618,9 +580,8 @@ public final class MsgServer2Client {
           msgInfo_ = other.msgInfo_;
           onChanged();
         }
-        if (!other.getCId().isEmpty()) {
-          cId_ = other.cId_;
-          onChanged();
+        if (other.getCId() != 0) {
+          setCId(other.getCId());
         }
         onChanged();
         return this;
@@ -890,59 +851,26 @@ public final class MsgServer2Client {
         return this;
       }
 
-      private java.lang.Object cId_ = "";
+      private int cId_ ;
       /**
        * <pre>
        *机舱编号
        * </pre>
        *
-       * <code>string c_id = 4;</code>
+       * <code>int32 c_id = 4;</code>
        */
-      public java.lang.String getCId() {
-        java.lang.Object ref = cId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          cId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getCId() {
+        return cId_;
       }
       /**
        * <pre>
        *机舱编号
        * </pre>
        *
-       * <code>string c_id = 4;</code>
+       * <code>int32 c_id = 4;</code>
        */
-      public com.google.protobuf.ByteString
-          getCIdBytes() {
-        java.lang.Object ref = cId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          cId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       *机舱编号
-       * </pre>
-       *
-       * <code>string c_id = 4;</code>
-       */
-      public Builder setCId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setCId(int value) {
+        
         cId_ = value;
         onChanged();
         return this;
@@ -952,29 +880,11 @@ public final class MsgServer2Client {
        *机舱编号
        * </pre>
        *
-       * <code>string c_id = 4;</code>
+       * <code>int32 c_id = 4;</code>
        */
       public Builder clearCId() {
         
-        cId_ = getDefaultInstance().getCId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *机舱编号
-       * </pre>
-       *
-       * <code>string c_id = 4;</code>
-       */
-      public Builder setCIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        cId_ = value;
+        cId_ = 0;
         onChanged();
         return this;
       }
@@ -1044,7 +954,7 @@ public final class MsgServer2Client {
       "\n\021msgserver2c.proto\032\021MessageType.proto\"R" +
       "\n\003Msg\022\031\n\007msgType\030\001 \001(\0162\010.MsgType\022\021\n\tsess" +
       "ionID\030\002 \001(\t\022\017\n\007msgInfo\030\003 \001(\t\022\014\n\004c_id\030\004 \001" +
-      "(\tB0\n\034com.fly.netty.codec.protobufB\020MsgS" +
+      "(\005B0\n\034com.fly.netty.codec.protobufB\020MsgS" +
       "erver2Clientb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =

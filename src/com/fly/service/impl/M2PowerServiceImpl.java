@@ -93,4 +93,9 @@ public class M2PowerServiceImpl implements M2PowerService {
 	public int updateRecordByMidAndCid(List<M2Power> recordList) {
 		return mapper.updateRecordByMidAndCid(recordList);
 	}
+
+	@Override
+	public int updateByPowerId(String powerId) {
+		return mapper.updateByPowerId(powerId);
+	}
 }

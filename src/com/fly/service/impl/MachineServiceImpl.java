@@ -8,7 +8,7 @@ import com.fly.mapping.MachineMapper;
 import com.fly.model.Machine;
 import com.fly.service.MachineService;
 
-@Service("machineServiceImpl")
+@Service("MachineService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
 public class MachineServiceImpl implements MachineService{
 

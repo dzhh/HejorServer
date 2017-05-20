@@ -54,7 +54,9 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			handleMidMsg(ctx, msgReq);
 		} else if(msgType.equals(MessageType.MsgType.init)) {// 初始化 init
 			initMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.open)) {
+		} else if(msgType.equals(MessageType.MsgType.open_ok)) { //弹出成功
+			openOkMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.open_error)) { //弹出失败
 			
 		} else if(msgType.equals(MessageType.MsgType.lock)) {
 			lockMsg(ctx, msgReq);
@@ -75,6 +77,31 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		}
 	}
 	
+	/**
+	 * 弹出成功
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void openOkMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		String powerId = msgReq.getPId();
+		int cid = msgReq.getCId();
+		//取出订单
+		Order order = RedisUtil.getOrder(powerId);
+		order.setOrderState(0);
+		//弹出时间
+		order.setOutTime(Long.toString(System.currentTimeMillis()));
+		//更新订单 order
+		OrderService orderService = SpringContextUtil.getBean("OrderService");
+		orderService.updateByPrimaryKey(order);
+		
+		//更新机器充电宝关系表mpower
+		M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
+		m2PowerService.updateByPowerId(order.getPowerId());
+		
+		//微信发消息
+		
+	}
+
 	private void changeMsg(ChannelHandlerContext ctx, Msg msgReq) {
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 		//根据读取redis缓存，根据powerId查找orderId
@@ -105,7 +132,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		int pCount = msgReq.getMachine().getCabin(0).getPCount();
 		int pQuantity = msgReq.getMachine().getCabin(0).getPQuantity();
 
-		OrderService orderService = SpringContextUtil.getBean("OrderServiceImpl");
+		OrderService orderService = SpringContextUtil.getBean("OrderService");
 		Order order =  orderService.selectByPowerId(powerId);
 		String outTime = order.getOutTime();
 		int rentHours = CommonUtil.getRentHour(outTime);
@@ -119,7 +146,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			orderService.updateByPrimaryKey(order);
 			
 			//机器关系表，更新信息，填充充电宝，
-			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerServiceImpl");
+			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
 			String m_id = msgReq.getMachine().getMId();
 
 			M2Power mPower = m2PowerService.selectByM_IdAndC_Id(cId, m_id);
@@ -136,7 +163,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			String orderId = order.getOrderId();
 
 			//更新用余额 rentHours * 1 = RMB
-			UserService userService = SpringContextUtil.getBean("userServiceImpl");
+			UserService userService = SpringContextUtil.getBean("UserService");
 			User usr = userService.selectByPrimaryKey(openId);
 			int balance = usr.getBalance() - rentHours;
 			usr.setBalance(balance);
@@ -164,7 +191,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		String mId = msgReq.getMachine().getMId();
 		
 		//验证过程   也可以在缓存中
-		MachineService machineService = SpringContextUtil.getBean("machineServiceImpl");
+		MachineService machineService = SpringContextUtil.getBean("MachineService");
 		Machine machine = machineService.selectByPrimaryKey(mId);
 		if(machine != null) {
 			machine.setM4g(msgReq.getMachine().getMobile());

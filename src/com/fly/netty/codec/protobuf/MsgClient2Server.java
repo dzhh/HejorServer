@@ -2135,6 +2135,33 @@ public final class MsgClient2Server {
      */
     com.google.protobuf.ByteString
         getMsgInfoBytes();
+
+    /**
+     * <pre>
+     *充电宝编号
+     * </pre>
+     *
+     * <code>string p_id = 5;</code>
+     */
+    java.lang.String getPId();
+    /**
+     * <pre>
+     *充电宝编号
+     * </pre>
+     *
+     * <code>string p_id = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getPIdBytes();
+
+    /**
+     * <pre>
+     *机舱编号
+     * </pre>
+     *
+     * <code>int32 c_id = 6;</code>
+     */
+    int getCId();
   }
   /**
    * Protobuf type {@code Msg}
@@ -2151,6 +2178,8 @@ public final class MsgClient2Server {
       msgType_ = 0;
       sessionID_ = "";
       msgInfo_ = "";
+      pId_ = "";
+      cId_ = 0;
     }
 
     @java.lang.Override
@@ -2207,6 +2236,17 @@ public final class MsgClient2Server {
               java.lang.String s = input.readStringRequireUtf8();
 
               msgInfo_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              pId_ = s;
+              break;
+            }
+            case 48: {
+
+              cId_ = input.readInt32();
               break;
             }
           }
@@ -2373,6 +2413,61 @@ public final class MsgClient2Server {
       }
     }
 
+    public static final int P_ID_FIELD_NUMBER = 5;
+    private volatile java.lang.Object pId_;
+    /**
+     * <pre>
+     *充电宝编号
+     * </pre>
+     *
+     * <code>string p_id = 5;</code>
+     */
+    public java.lang.String getPId() {
+      java.lang.Object ref = pId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *充电宝编号
+     * </pre>
+     *
+     * <code>string p_id = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPIdBytes() {
+      java.lang.Object ref = pId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        pId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int C_ID_FIELD_NUMBER = 6;
+    private int cId_;
+    /**
+     * <pre>
+     *机舱编号
+     * </pre>
+     *
+     * <code>int32 c_id = 6;</code>
+     */
+    public int getCId() {
+      return cId_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2397,6 +2492,12 @@ public final class MsgClient2Server {
       if (!getMsgInfoBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, msgInfo_);
       }
+      if (!getPIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, pId_);
+      }
+      if (cId_ != 0) {
+        output.writeInt32(6, cId_);
+      }
     }
 
     public int getSerializedSize() {
@@ -2417,6 +2518,13 @@ public final class MsgClient2Server {
       }
       if (!getMsgInfoBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, msgInfo_);
+      }
+      if (!getPIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, pId_);
+      }
+      if (cId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, cId_);
       }
       memoizedSize = size;
       return size;
@@ -2444,6 +2552,10 @@ public final class MsgClient2Server {
       }
       result = result && getMsgInfo()
           .equals(other.getMsgInfo());
+      result = result && getPId()
+          .equals(other.getPId());
+      result = result && (getCId()
+          == other.getCId());
       return result;
     }
 
@@ -2464,6 +2576,10 @@ public final class MsgClient2Server {
       }
       hash = (37 * hash) + MSGINFO_FIELD_NUMBER;
       hash = (53 * hash) + getMsgInfo().hashCode();
+      hash = (37 * hash) + P_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getPId().hashCode();
+      hash = (37 * hash) + C_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getCId();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2594,6 +2710,10 @@ public final class MsgClient2Server {
         }
         msgInfo_ = "";
 
+        pId_ = "";
+
+        cId_ = 0;
+
         return this;
       }
 
@@ -2624,6 +2744,8 @@ public final class MsgClient2Server {
           result.machine_ = machineBuilder_.build();
         }
         result.msgInfo_ = msgInfo_;
+        result.pId_ = pId_;
+        result.cId_ = cId_;
         onBuilt();
         return result;
       }
@@ -2678,6 +2800,13 @@ public final class MsgClient2Server {
         if (!other.getMsgInfo().isEmpty()) {
           msgInfo_ = other.msgInfo_;
           onChanged();
+        }
+        if (!other.getPId().isEmpty()) {
+          pId_ = other.pId_;
+          onChanged();
+        }
+        if (other.getCId() != 0) {
+          setCId(other.getCId());
         }
         onChanged();
         return this;
@@ -3099,6 +3228,133 @@ public final class MsgClient2Server {
         onChanged();
         return this;
       }
+
+      private java.lang.Object pId_ = "";
+      /**
+       * <pre>
+       *充电宝编号
+       * </pre>
+       *
+       * <code>string p_id = 5;</code>
+       */
+      public java.lang.String getPId() {
+        java.lang.Object ref = pId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          pId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *充电宝编号
+       * </pre>
+       *
+       * <code>string p_id = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getPIdBytes() {
+        java.lang.Object ref = pId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          pId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *充电宝编号
+       * </pre>
+       *
+       * <code>string p_id = 5;</code>
+       */
+      public Builder setPId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        pId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *充电宝编号
+       * </pre>
+       *
+       * <code>string p_id = 5;</code>
+       */
+      public Builder clearPId() {
+        
+        pId_ = getDefaultInstance().getPId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *充电宝编号
+       * </pre>
+       *
+       * <code>string p_id = 5;</code>
+       */
+      public Builder setPIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        pId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int cId_ ;
+      /**
+       * <pre>
+       *机舱编号
+       * </pre>
+       *
+       * <code>int32 c_id = 6;</code>
+       */
+      public int getCId() {
+        return cId_;
+      }
+      /**
+       * <pre>
+       *机舱编号
+       * </pre>
+       *
+       * <code>int32 c_id = 6;</code>
+       */
+      public Builder setCId(int value) {
+        
+        cId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *机舱编号
+       * </pre>
+       *
+       * <code>int32 c_id = 6;</code>
+       */
+      public Builder clearCId() {
+        
+        cId_ = 0;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -3177,11 +3433,11 @@ public final class MsgClient2Server {
       "_lock\030\003 \001(\005\022\017\n\007p_count\030\004 \001(\005\022\022\n\np_quanti" +
       "ty\030\005 \001(\005\"L\n\007Machine\022\014\n\004m_id\030\001 \001(\t\022\014\n\004wif" +
       "i\030\002 \001(\005\022\016\n\006mobile\030\003 \001(\005\022\025\n\005cabin\030\004 \003(\0132\006" +
-      ".Cabin\"_\n\003Msg\022\031\n\007msgType\030\001 \001(\0162\010.MsgType" +
+      ".Cabin\"{\n\003Msg\022\031\n\007msgType\030\001 \001(\0162\010.MsgType" +
       "\022\021\n\tsessionID\030\002 \001(\t\022\031\n\007machine\030\003 \001(\0132\010.M" +
-      "achine\022\017\n\007msgInfo\030\004 \001(\tB0\n\034com.fly.netty" +
-      ".codec.protobufB\020MsgClient2Serverb\006proto" +
-      "3"
+      "achine\022\017\n\007msgInfo\030\004 \001(\t\022\014\n\004p_id\030\005 \001(\t\022\014\n" +
+      "\004c_id\030\006 \001(\005B0\n\034com.fly.netty.codec.proto" +
+      "bufB\020MsgClient2Serverb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3213,7 +3469,7 @@ public final class MsgClient2Server {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new java.lang.String[] { "MsgType", "SessionID", "Machine", "MsgInfo", });
+        new java.lang.String[] { "MsgType", "SessionID", "Machine", "MsgInfo", "PId", "CId", });
     com.fly.netty.codec.protobuf.MessageType.getDescriptor();
   }
 

@@ -12,18 +12,42 @@ import com.fly.model.Order;
  */
 public class RedisUtil {
 
-	private static Map<String, Order> map = new HashMap<String, Order>();
-	
+	/**
+	 * 新订单
+	 * key powerId
+	 * value Order
+	 */
+	private static Map<String, Order> orderMap = new HashMap<String, Order>();
+
 	public static Order getOrder(String key) {
-		return map.get(key);
+		return orderMap.get(key);
 	}
 	
 	public static void putOrder(String key, Order order) {
-		map.put(key, order);
+		orderMap.put(key, order);
 	}
 	
 	public static void removeOrder(String key) {
-		map.remove(key);
+		orderMap.remove(key);
+	}
+	
+	/**
+	 * 更换订单
+	 * key powerId
+	 * value Order
+	 */
+	private static Map<String, Order> changeOrderMap = new HashMap<String, Order>();
+	
+	public static Order getChangeOrder(String key) {
+		return changeOrderMap.get(key);
+	}
+	
+	public static void putChangeOrder(String key, Order order) {
+		changeOrderMap.put(key, order);
+	}
+	
+	public static void removeChangeOrder(String key) {
+		changeOrderMap.remove(key);
 	}
 	
 }
