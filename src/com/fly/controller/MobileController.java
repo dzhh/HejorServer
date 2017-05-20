@@ -86,7 +86,7 @@ public class MobileController {
 	    if(userState ==1 && powerInfo !=null){
 	    	//netty通知机器
 	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-	    	msgReqbuilder.setMsgType(MessageType.MsgType.open);
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.OPEN);
 	    	msgReqbuilder.setCId(powerInfo.getcId());
 			//发送消息
 	    	nettyService.sendMsg(mId, msgReqbuilder.build(), null);
@@ -174,7 +174,7 @@ public class MobileController {
 	    	}else{
 		    	// 未完成  通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
 				MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-				msgReqbuilder.setMsgType(MessageType.MsgType.change);
+				msgReqbuilder.setMsgType(MessageType.MsgType.CHANGE_MODE);
 				msgReqbuilder.setMsgInfo(orderId);
 				
 				RedisUtil.putChangeOrder(order.getPowerId(), order);

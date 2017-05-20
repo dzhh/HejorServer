@@ -52,30 +52,38 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		// 消息类型
 		MessageType.MsgType msgType =  msgReq.getMsgType();
 		
-		if(msgType.equals(MessageType.MsgType.mid)) {//验证机器
-			handleMidMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.init)) {// 初始化 init
-			initMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.open_ok)) { //弹出成功
-			openOkMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.open_error)) { //弹出失败
-			openErrorMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.lock)) { //归还充电宝
-			lockMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.heat)) {
+		if(msgType.equals(MessageType.MsgType.AUTH)) {//验证机器
+			handleAuthMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.INIT)) {// 存储初始化 init
 			
-		} else if(msgType.equals(MessageType.MsgType.update)) {//机器自检更新
+			initMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_OK)) { //打开充电舱成功
+			
+			openOkMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_ERROR)) { //打开充电舱失败
+			
+			openErrorMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.RETURN)) { //归还充电宝
+			
+			returnPowerMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.HEAT)) {
+			
+		} else if(msgType.equals(MessageType.MsgType.UPDATE)) {//机器自检更新
 			//1、更新数据库
-			updateMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.error)) {
+			updateMachineMsg(ctx, msgReq);
+		} else if(msgType.equals(MessageType.MsgType.ERROR)) {
+			
 			errorMsg(ctx, msgReq);
 			//机器自检报错
 		}
-		else if(msgType.equals(MessageType.MsgType.change)){//更换充电宝
+		else if(msgType.equals(MessageType.MsgType.CHANGE)){//更换充电宝
+			
 			changeMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.change_back_ok)){//更换充电宝弹出成功
+		} else if(msgType.equals(MessageType.MsgType.CHANGE_BACK_OK)){//更换充电宝弹出成功
+			
 			changeBackOkMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.change_back_error)){//更换充电宝弹出失败
+		} else if(msgType.equals(MessageType.MsgType.CHANGE_BACK_ERROR)){//更换充电宝弹出失败
+			
 			changeBackErrorMsg(ctx, msgReq);
 		}
 	}
@@ -94,7 +102,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	 * @param ctx
 	 * @param msgReq
 	 */
-	private void updateMsg(ChannelHandlerContext ctx, Msg msg) {
+	private void updateMachineMsg(ChannelHandlerContext ctx, Msg msg) {
 		//更新机器信息 根据机器m_id在m_power表插入六条数据
 		//
 		List<Cabin> cabinList = msg.getMachine().getCabinList();
@@ -132,11 +140,11 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		//返回 ok
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 		if(m_result == 1) {
-			builder.setMsgType(MessageType.MsgType.update_ok);
-			builder.setMsgInfo("update ok");
+			builder.setMsgType(MessageType.MsgType.UPDATE_BACK_OK);
+			builder.setMsgInfo("update data ok");
 		} else {
-			builder.setMsgType(MessageType.MsgType.update_error);
-			builder.setMsgInfo("update error");
+			builder.setMsgType(MessageType.MsgType.UPDATE_BACK_ERROR);
+			builder.setMsgInfo("update data error");
 		}
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
@@ -160,7 +168,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 
 		//给app发送消息
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		builder.setMsgType(MessageType.MsgType.change_back_error);
+		builder.setMsgType(MessageType.MsgType.CHANGE_BACK_ERROR);
 		builder.setMsgInfo("change back error");
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
@@ -196,7 +204,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		//给app发送消息
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		builder.setMsgType(MessageType.MsgType.change_back_ok);
+		builder.setMsgType(MessageType.MsgType.CHANGE_BACK_OK);
 		builder.setMsgInfo("change_back_ok sucess");
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
@@ -225,11 +233,11 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 
 
 		//给app发送消息
-		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		builder.setMsgType(MessageType.MsgType.open_error);
-		builder.setMsgInfo("open error");
-		MsgServer2Client.Msg msgResp = builder.build();
-		ctx.writeAndFlush(msgResp);
+//		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+//		builder.setMsgType(MessageType.MsgType.open_error);
+//		builder.setMsgInfo("open error");
+//		MsgServer2Client.Msg msgResp = builder.build();
+//		ctx.writeAndFlush(msgResp);
 		//清理 order缓存 
 		RedisUtil.removeOrder(powerId);
 	}
@@ -261,11 +269,12 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		
 		//给app发送消息
-		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		builder.setMsgType(MessageType.MsgType.open_ok);
-		builder.setMsgInfo("open sucess");
-		MsgServer2Client.Msg msgResp = builder.build();
-		ctx.writeAndFlush(msgResp);
+//		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+//		builder.setMsgType(MessageType.MsgType.open_ok);
+//		builder.setMsgInfo("open sucess");
+//		MsgServer2Client.Msg msgResp = builder.build();
+//		ctx.writeAndFlush(msgResp);
+		
 		//清理 order缓存 
 		RedisUtil.removeOrder(powerId);
 	}
@@ -279,10 +288,10 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		//无缓存key，通知机器弹出
 		if(order == null) {
-			builder.setMsgType(MessageType.MsgType.change_error);
+			builder.setMsgType(MessageType.MsgType.CHANGE_BACK_ERROR);
 			builder.setCId(cid);
 			builder.setMsgInfo("change error");
-			//向微信发消息
+			//向微信发更换失败消息
 			
 			
 		} else {
@@ -300,7 +309,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	    	
 		    //netty通知机器通知app充电舱编号
 	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-	    	msgReqbuilder.setMsgType(MessageType.MsgType.change_ok);
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.CHANGE_BACK_OK);
 	    	msgReqbuilder.setCId(newMpower.getcId());
 	    	RedisUtil.putOrder(newMpower.getPowerId(), newOrder);
 		}
@@ -352,7 +361,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		return p;
 	}
 	
-	private void lockMsg(ChannelHandlerContext ctx, Msg msgReq) {
+	private void returnPowerMsg(ChannelHandlerContext ctx, Msg msgReq) {
 		//验证订单时间 72小时，一年后无法归还
 		int cId = msgReq.getMachine().getCabin(0).getCId();
 		String powerId = msgReq.getMachine().getCabin(0).getPId();
@@ -367,8 +376,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		if(rentHours > 72 || order.getIsChange() ==1) {
 			//不能归还只能更换，向机器发送弹出消息弹出cId
-			builder.setMsgType(MessageType.MsgType.lock_error);
-			builder.setMsgInfo("lock error");//机器弹出充电宝
+			builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
+			builder.setMsgInfo("return power fail");//机器弹出充电宝
 			//给微信发消息
 			
 		}else{
@@ -404,19 +413,19 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 					//调用微信模板消息接口
 					
 					//回应app "ok"
-					builder.setMsgType(MessageType.MsgType.lock_ok);
+					builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
 					builder.setMsgInfo("lock sucess");
 				} else {
 					//回滚
 					mPower.setIsempty(0);
 					m2PowerService.updateByPowerId(powerId);
 					//更新失败 弹出充电宝 发送失败消息
-					builder.setMsgType(MessageType.MsgType.lock_error);
+					builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
 					builder.setMsgInfo("lock error");//机器弹出充电宝
 				}
 			} else {
 				//更新失败 弹出充电宝 发送失败消息
-				builder.setMsgType(MessageType.MsgType.lock_error);
+				builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
 				builder.setMsgInfo("lock error");//机器弹出充电宝
 				
 				//调用微信模板消息接口
@@ -435,7 +444,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	 * @param ctx
 	 * @param msgReq
 	 */
-	private void handleMidMsg(ChannelHandlerContext ctx, MsgClient2Server.Msg msgReq) {
+	private void handleAuthMsg(ChannelHandlerContext ctx, MsgClient2Server.Msg msgReq) {
 		String mId = msgReq.getMachine().getMId();
 		
 		//验证过程   也可以在缓存中
@@ -448,8 +457,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			try {
 				//返回 ok
 				MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-				builder.setMsgType(MessageType.MsgType.mid_ok);
-				builder.setMsgInfo("midSucess");
+				builder.setMsgType(MessageType.MsgType.AUTH_BACK_OK);
+				builder.setMsgInfo("认证成功");
 				MsgServer2Client.Msg msgResp = builder.build();
 				ctx.writeAndFlush(msgResp);
 				//存储连接  存储机器状态   这个地方需要考虑下
@@ -461,8 +470,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		} else {
 			//返回 error
 			MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-			builder.setMsgType(MessageType.MsgType.mid_error);
-			builder.setMsgInfo("midError");
+			builder.setMsgType(MessageType.MsgType.AUTH_BACK_ERROR);
+			builder.setMsgInfo("认证失败");
 			MsgServer2Client.Msg msgResp = builder.build();
 			ctx.writeAndFlush(msgResp);
 		}
@@ -513,11 +522,11 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		//返回 ok
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 		if(m_result == 1) {
-			builder.setMsgType(MessageType.MsgType.init_ok);
-			builder.setMsgInfo("init ok");
+			builder.setMsgType(MessageType.MsgType.INIT_BACK_OK);
+			builder.setMsgInfo("init data success");
 		} else {
-			builder.setMsgType(MessageType.MsgType.init_error);
-			builder.setMsgInfo("init error");
+			builder.setMsgType(MessageType.MsgType.INIT_BACK_ERROR);
+			builder.setMsgInfo("init data fail");
 		}
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
