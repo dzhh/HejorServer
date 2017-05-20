@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fly.netty.codec.protobuf.MessageType;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
 import com.fly.service.NettyService;
 
@@ -41,7 +42,7 @@ public class NettyController {
 		
 		if(msgType.equals("open")) {
 			MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-	    	msgReqbuilder.setMsgType(MsgServer2Client.MsgType.open);
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.open);
 	    	msgReqbuilder.setCId(cID);
 //				NettySendMsg.sendMsg(channel, msgReqbuilder.build());
 

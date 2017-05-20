@@ -17,6 +17,12 @@ public interface M2PowerMapper {
     int updateByPrimaryKeySelective(M2Power record);
 
     int updateByPrimaryKey(M2Power record);
+    
     int updateByM_IdAndC_id(M2Power record);
+    
     List<M2Power> selectByM_Id(String m_id);
+
+	int insertList(List<M2Power> recordList);
+
+	int updateRecordByMidAndCid(List<M2Power> recordList);
 }

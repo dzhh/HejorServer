@@ -21,8 +21,8 @@ import com.fly.model.M2Power;
 import com.fly.model.Machine;
 import com.fly.model.Order;
 import com.fly.model.User;
+import com.fly.netty.codec.protobuf.MessageType;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
-import com.fly.netty.codec.protobuf.MsgServer2Client.MsgType;
 import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
 import com.fly.service.NettyService;
@@ -169,7 +169,7 @@ public class MobileController {
 	    	}else{
 		    	// 未完成  通知app进入更换状态，redis缓存orderId与powerId，powerId作为key
 				MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-				msgReqbuilder.setMsgType(MsgType.change);
+				msgReqbuilder.setMsgType(MessageType.MsgType.change);
 				msgReqbuilder.setMsgInfo(orderId);
 				
 				RedisUtil.putOrder(order.getPowerId(), order);

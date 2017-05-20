@@ -27,4 +27,8 @@ public interface M2PowerService {
     
     List<M2Power> selectByM_Id(String m_id);
 
+	int insertList(List<M2Power> recordList);
+	
+	int updateRecordByMidAndCid(List<M2Power> recordList);
+
 }

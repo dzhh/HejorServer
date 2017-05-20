@@ -143,4 +143,33 @@
       updateTime = #{updateTime,jdbcType=VARCHAR}
     where m_id = #{m_id,jdbcType=VARCHAR} and c_id = #{c_id,jdbcType=INTEGER}
   </update>
+  
+    <update id="updateRecordByMidAndCid" parameterType="java.util.List">
+         <foreach collection="list" item="item" index="index" open="" close="" separator=";"> 
+		    update m_power
+		    <set>
+		     power_id = #{item.powerId,jdbcType=VARCHAR},
+		      isEmpty = #{item.isempty,jdbcType=INTEGER},
+		      d_lock = #{item.dLock,jdbcType=INTEGER},
+		      p_lock = #{item.pLock,jdbcType=INTEGER}
+		      updateTime = #{item.updateTime,jdbcType=VARCHAR}
+		      </set> 
+		    where m_id = #{item.m_id,jdbcType=VARCHAR} and c_id = #{item.c_id,jdbcType=INTEGER}
+		</foreach>  
+  </update>
+    
+  
+    <insert id="insertList" parameterType="java.util.List">
+    insert into m_power (id, m_id, c_id, 
+      power_id, isEmpty, p_lock, updateTime
+      )
+    values 
+        <foreach collection="list" item="item" index="index" separator=",">
+                (#{item.id,jdbcType=INTEGER}, #{item.mId,jdbcType=VARCHAR}, #{item.cId,jdbcType=INTEGER}, 
+      #{item.powerId,jdbcType=VARCHAR}, #{item.isempty,jdbcType=INTEGER}, #{item.pLock,jdbcType=INTEGER}, 
+      #{item.updateTime,jdbcType=VARCHAR}
+      )
+        </foreach>
+  </insert>
+  
 </mapper>

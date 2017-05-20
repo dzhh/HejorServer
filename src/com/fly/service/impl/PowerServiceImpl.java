@@ -4,10 +4,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fly.mapping.PowerMapper;
 import com.fly.model.Power;
 import com.fly.service.PowerService;
 
+@Service("PowerService")
+@Transactional
 public class PowerServiceImpl implements PowerService {
 	@Resource
 	private PowerMapper mapper;
