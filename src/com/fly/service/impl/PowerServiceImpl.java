@@ -1,10 +1,16 @@
 package com.fly.service.impl;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.fly.mapping.PowerMapper;
 import com.fly.model.Power;
 import com.fly.service.PowerService;
 
 public class PowerServiceImpl implements PowerService {
-
+	@Resource
+	private PowerMapper mapper;
 	@Override
 	public int deleteByPrimaryKey(String powerId) {
 		// TODO Auto-generated method stub
@@ -39,6 +45,13 @@ public class PowerServiceImpl implements PowerService {
 	public int updateByPrimaryKey(Power record) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public int updateByPowerList(List<Power> record) {
+		// TODO Auto-generated method stub
+		int s = mapper.updateByPowerList(record);
+		return s;
 	}
 
 }

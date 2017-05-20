@@ -101,4 +101,15 @@
       id = #{id,jdbcType=INTEGER}
     where power_id = #{powerId,jdbcType=VARCHAR}
   </update>
+  
+  <update id="updateByPowerList" parameterType="java.util.List">
+     <foreach collection="list" item="item" index="index" open="" close="" separator=";"> 
+              update test 
+                    <set>     
+                            p_quantity=#{item.pQuantity},
+                            p_count= #{item.pCount} 
+                    </set>    
+              where power_id = #{item.powerId}     
+      </foreach>         
+	</update>
 </mapper>
