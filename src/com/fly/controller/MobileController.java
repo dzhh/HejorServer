@@ -84,16 +84,29 @@ public class MobileController {
 	    int userState = analyzeUser(userId);
 	    
 	    if(userState ==1 && powerInfo !=null){
-	    	//netty通知机器
+	    	//通知机器app
 	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
 	    	msgReqbuilder.setMsgType(MessageType.MsgType.OPEN);
 	    	msgReqbuilder.setCId(powerInfo.getcId());
-			//发送消息
-	    	nettyService.sendMsg(mId, msgReqbuilder.build(), null);
 	    	
-			String json = "";
-			//未完成 修改机器关系表状态 (netty 收到回应信息后修改)
-			
+			//发送消息
+	    	ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if(future.isSuccess()) {
+						System.out.println("打开充电舱消息发送成功");
+						//处理记录等
+						
+					} else {
+						//发送失败 处理
+						System.out.println("打开充电舱消息发送失败");
+					}
+				}
+			};
+			//发送消息
+	    	nettyService.sendMsg(mId, msgReqbuilder.build(), channelFutureListener);
+	    	
+			String json = "";			
 			//生成订单
 			Order order = addOrderForUser(userId, powerInfo);
 			order.setIsPay(1);
@@ -284,11 +297,11 @@ public class MobileController {
 		order.setmId(mpower.getmId());
 		order.setPowerId(mpower.getPowerId());
 		order.setmId(mpower.getmId());
-//		order.setOutTime(timeStr);
+		order.setOutTime(timeStr);
 		order.setIsChange(0);
 		order.setTotalFee(0);
 		order.setOrderState(2);
-		order.setIsPay(0);
+		order.setIsPay(1);
 		order.setcId(Integer.toString(mpower.getcId()));
 		return order;
 	}

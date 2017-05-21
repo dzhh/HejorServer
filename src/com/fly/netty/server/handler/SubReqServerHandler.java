@@ -376,7 +376,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		if(rentHours > 72 || order.getIsChange() ==1) {
 			//不能归还只能更换，向机器发送弹出消息弹出cId
-			builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
+			builder.setMsgType(MessageType.MsgType.RETURN_BACK_ERROR);
 			builder.setMsgInfo("return power fail");//机器弹出充电宝
 			//给微信发消息
 			
@@ -425,16 +425,16 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 				}
 			} else {
 				//更新失败 弹出充电宝 发送失败消息
-				builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
+				builder.setMsgType(MessageType.MsgType.RETURN_BACK_ERROR);
 				builder.setMsgInfo("lock error");//机器弹出充电宝
 				
 				//调用微信模板消息接口
 				
 			}
 			
-			MsgServer2Client.Msg msgResp = builder.build();
-			ctx.writeAndFlush(msgResp);
 		}	
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
 	}
 
 	/**
@@ -464,6 +464,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 				//存储连接  存储机器状态   这个地方需要考虑下
 				NettyChannelMap.add(msgReq.getSessionID(), (SocketChannel)ctx.channel());
 				machineService.updateByPrimaryKey(machine);
+				System.out.println("机器认证成功");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -474,6 +475,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			builder.setMsgInfo("认证失败");
 			MsgServer2Client.Msg msgResp = builder.build();
 			ctx.writeAndFlush(msgResp);
+			System.out.println("机器认证失败");
 		}
 	}
 	

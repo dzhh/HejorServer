@@ -42,7 +42,7 @@ public class NettyController {
 		
 		if(msgType.equals("open")) {
 			MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-	    	msgReqbuilder.setMsgType(MessageType.MsgType.open);
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.OPEN);
 	    	msgReqbuilder.setCId(cID);
 //				NettySendMsg.sendMsg(channel, msgReqbuilder.build());
 

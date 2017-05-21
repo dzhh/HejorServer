@@ -30,7 +30,7 @@
     select 
     <include refid="Base_Column_List" />
     from order_list
-    where power_id = #{powerId,jdbcType=VARCHAR} and order_state = #{0,jdbcType=INTEGER}
+    where power_id = #{powerId,jdbcType=VARCHAR} and order_state = 0
   </select>
   
   <select id="selectUnPayByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
