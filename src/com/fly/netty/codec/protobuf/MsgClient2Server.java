@@ -364,6 +364,17 @@ public final class MsgClient2Server {
     }
 
     public static com.fly.netty.codec.protobuf.MsgClient2Server.Cabin parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Cabin parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Cabin parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
@@ -1274,6 +1285,17 @@ public final class MsgClient2Server {
       return hash;
     }
 
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Machine parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Machine parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static com.fly.netty.codec.protobuf.MsgClient2Server.Machine parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2585,6 +2607,17 @@ public final class MsgClient2Server {
       return hash;
     }
 
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Msg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.fly.netty.codec.protobuf.MsgClient2Server.Msg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static com.fly.netty.codec.protobuf.MsgClient2Server.Msg parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {

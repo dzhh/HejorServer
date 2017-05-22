@@ -165,7 +165,7 @@ public class MobileController {
 	
 	/**
 	 * 更换充电宝
-	 * @param request  http://127.0.0.1:8080/mobile/rent?m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&openId=o5UR3xFIif1N2qtNNc4HHsYxMohg&orderId=1111111111
+	 * @param request  127.0.0.1:8080/mobile/change?openId=o5UR3xFIif1N2qtNNc4HHsYxMohg&m_id=1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV&orderId=1493659527477152
 	 * @return
 	 */
 	@RequestMapping(value="/mobile/change",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
@@ -190,8 +190,22 @@ public class MobileController {
 				msgReqbuilder.setMsgType(MessageType.MsgType.CHANGE_MODE);
 				msgReqbuilder.setMsgInfo(orderId);
 				
+		    	ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
+					@Override
+					public void operationComplete(ChannelFuture future) throws Exception {
+						if(future.isSuccess()) {
+							System.out.println("打开充电舱消息发送成功");
+							//处理记录等
+							
+						} else {
+							//发送失败 处理
+							System.out.println("打开充电舱消息发送失败");
+						}
+					}
+				};
+				
 				RedisUtil.putChangeOrder(order.getPowerId(), order);
-	    		nettyService.sendMsg(mId, msgReqbuilder.build(), null);
+	    		nettyService.sendMsg(mId, msgReqbuilder.build(), channelFutureListener);
 	    		return "geng huan zhong";
 	    	}
 		}else{
@@ -240,11 +254,13 @@ public class MobileController {
 	@RequestMapping(value="/mobile/check",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String checkChangeState( @RequestParam(value="orderId") String orderId){
-		if(orderId != null && orderId.length()>0){
-			Order order = orderService.selectByPrimaryKey(orderId);
-			int isChange = order.getIsChange();
-			String outTime= order.getOutTime();
-			int rentHours = CommonUtil.getRentHour(outTime);
+		Order order = orderService.selectByPrimaryKey(orderId);
+		int isChange = order.getIsChange();
+		String outTime= order.getOutTime();
+		int rentHours = CommonUtil.getRentHour(outTime);
+		
+		if(order.getOrderState() == 0){//进行中的
+
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	if(isChange ==1) {
 	    		map.put("req", "1");
@@ -252,7 +268,7 @@ public class MobileController {
 				String json = JsonUtil.beanToJson(map);
 			    return json;
 	    	} else {
-	    		if(rentHours < 48){
+	    		if(rentHours < 72){
 			    	map.put("req", "-1");
 			    	map.put("msg", "租借未超过48小时，无法更换");
 					String json = JsonUtil.beanToJson(map);

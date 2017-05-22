@@ -382,6 +382,17 @@ public final class MsgServer2Client {
     }
 
     public static com.fly.netty.codec.protobuf.MsgServer2Client.Msg parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.fly.netty.codec.protobuf.MsgServer2Client.Msg parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.fly.netty.codec.protobuf.MsgServer2Client.Msg parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);

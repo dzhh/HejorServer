@@ -237,6 +237,30 @@ public final class MessageType {
      * <code>RESP = 1013;</code>
      */
     RESP(1013),
+    /**
+     * <pre>
+     *服务器发送更换开仓状态
+     * </pre>
+     *
+     * <code>CHANGE_OPEN = 1015;</code>
+     */
+    CHANGE_OPEN(1015),
+    /**
+     * <pre>
+     *客户端返回更换开仓成功状态
+     * </pre>
+     *
+     * <code>CHANGE_OPEN_OK = 2015;</code>
+     */
+    CHANGE_OPEN_OK(2015),
+    /**
+     * <pre>
+     *更换开舱状态失败
+     * </pre>
+     *
+     * <code>CHANGE_OPEN_ERROR = 2016;</code>
+     */
+    CHANGE_OPEN_ERROR(2016),
     UNRECOGNIZED(-1),
     ;
 
@@ -458,6 +482,30 @@ public final class MessageType {
      * <code>RESP = 1013;</code>
      */
     public static final int RESP_VALUE = 1013;
+    /**
+     * <pre>
+     *服务器发送更换开仓状态
+     * </pre>
+     *
+     * <code>CHANGE_OPEN = 1015;</code>
+     */
+    public static final int CHANGE_OPEN_VALUE = 1015;
+    /**
+     * <pre>
+     *客户端返回更换开仓成功状态
+     * </pre>
+     *
+     * <code>CHANGE_OPEN_OK = 2015;</code>
+     */
+    public static final int CHANGE_OPEN_OK_VALUE = 2015;
+    /**
+     * <pre>
+     *更换开舱状态失败
+     * </pre>
+     *
+     * <code>CHANGE_OPEN_ERROR = 2016;</code>
+     */
+    public static final int CHANGE_OPEN_ERROR_VALUE = 2016;
 
 
     public final int getNumber() {
@@ -509,6 +557,9 @@ public final class MessageType {
         case 1011: return HEAT;
         case 1012: return REQ;
         case 1013: return RESP;
+        case 1015: return CHANGE_OPEN;
+        case 2015: return CHANGE_OPEN_OK;
+        case 2016: return CHANGE_OPEN_ERROR;
         default: return null;
       }
     }
@@ -570,7 +621,7 @@ public final class MessageType {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021MessageType.proto*\247\004\n\007MsgType\022\010\n\004ZERO\020" +
+      "\n\021MessageType.proto*\346\004\n\007MsgType\022\010\n\004ZERO\020" +
       "\000\022\t\n\004AUTH\020\351\007\022\021\n\014AUTH_BACK_OK\020\321\017\022\024\n\017AUTH_" +
       "BACK_ERROR\020\241\037\022\t\n\004INIT\020\352\007\022\021\n\014INIT_BACK_OK" +
       "\020\322\017\022\024\n\017INIT_BACK_ERROR\020\242\037\022\013\n\006UPDATE\020\353\007\022\023" +
@@ -584,8 +635,10 @@ public final class MessageType {
       "CK\020\361\007\022\021\n\014LOCK_BACK_OK\020\331\017\022\024\n\017LOCK_BACK_ER" +
       "ROR\020\251\037\022\n\n\005ERROR\020\362\007\022\022\n\rERROR_BACK_OK\020\332\017\022\025" +
       "\n\020ERROR_BACK_ERROR\020\252\037\022\t\n\004HEAT\020\363\007\022\010\n\003REQ\020" +
-      "\364\007\022\t\n\004RESP\020\365\007B+\n\034com.fly.netty.codec.pro" +
-      "tobufB\013MessageTypeb\006proto3"
+      "\364\007\022\t\n\004RESP\020\365\007\022\020\n\013CHANGE_OPEN\020\367\007\022\023\n\016CHANG" +
+      "E_OPEN_OK\020\337\017\022\026\n\021CHANGE_OPEN_ERROR\020\340\017B+\n\034" +
+      "com.fly.netty.codec.protobufB\013MessageTyp" +
+      "eb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

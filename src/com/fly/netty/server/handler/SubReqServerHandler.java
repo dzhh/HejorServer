@@ -79,10 +79,12 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		else if(msgType.equals(MessageType.MsgType.CHANGE)){//更换充电宝
 			
 			changeMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.CHANGE_BACK_OK)){//更换充电宝弹出成功
+//			changeBackOkMsg(ctx, msgReq);
+		} 
+		else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_OK)){//更换充电宝弹出成功
 			
 			changeBackOkMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.CHANGE_BACK_ERROR)){//更换充电宝弹出失败
+		} else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_ERROR)){//更换充电宝弹出失败
 			
 			changeBackErrorMsg(ctx, msgReq);
 		}
@@ -284,7 +286,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		//根据读取redis缓存，根据powerId查找orderId
 		String powerId = msgReq.getMachine().getCabin(0).getPId();
 		int cid = msgReq.getMachine().getCabin(0).getCId();
-		Order order = RedisUtil.getOrder(powerId);
+		Order order = RedisUtil.getChangeOrder(powerId);
 		
 		//无缓存key，通知机器弹出
 		if(order == null) {
@@ -305,19 +307,22 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	    	newOrder.setIsPay(1);
 	    	
 			OrderService orderService = SpringContextUtil.getBean("OrderService");
-	    	orderService.insert(order);
-	    	
+	    	orderService.insert(newOrder);
+	    	//更新之前订单
+	    	order.setOrderState(1);
+	    	orderService.updateByPrimaryKey(order);
 		    //netty通知机器通知app充电舱编号
-	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
-	    	msgReqbuilder.setMsgType(MessageType.MsgType.CHANGE_BACK_OK);
-	    	msgReqbuilder.setCId(newMpower.getcId());
-	    	RedisUtil.putOrder(newMpower.getPowerId(), newOrder);
+//	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
+	    	builder.setMsgType(MessageType.MsgType.CHANGE_OPEN);
+	    	builder.setCId(newMpower.getcId());
+			RedisUtil.putOrder(newOrder.getPowerId(), newOrder);
+
 		}
 		
 		MsgServer2Client.Msg msgResp = builder.build();
 		ctx.writeAndFlush(msgResp);
 		//删除缓存
-		RedisUtil.removeOrder(powerId);
+		RedisUtil.removeChangeOrder(powerId);
 	}
 	
 	/**
@@ -335,7 +340,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		order.setmId(mpower.getmId());
 		order.setPowerId(mpower.getPowerId());
 		order.setmId(mpower.getmId());
-//		order.setOutTime(timeStr);
+		order.setOutTime(timeStr);
 		order.setIsChange(1);
 		order.setTotalFee(0);
 		order.setOrderState(2);
