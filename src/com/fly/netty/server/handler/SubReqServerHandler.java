@@ -372,7 +372,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		String powerId = msgReq.getMachine().getCabin(0).getPId();
 		int pCount = msgReq.getMachine().getCabin(0).getPCount();
 		int pQuantity = msgReq.getMachine().getCabin(0).getPQuantity();
-
+		String m_id = msgReq.getMachine().getMId();
+		
 		OrderService orderService = SpringContextUtil.getBean("OrderService");
 		Order order = orderService.selectByPowerId(powerId);
 		String outTime = order.getOutTime();
@@ -388,45 +389,60 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		}else{
 			//1、能归还：更新订单，
 			order.setOrderState(1);
+			order.setTotalFee(rentHours);
 			orderService.updateByPrimaryKey(order);
 			
 			//机器关系表，更新信息，填充充电宝，
 			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
-			String m_id = msgReq.getMachine().getMId();
-
-			M2Power mPower = m2PowerService.selectByM_IdAndC_Id(cId, m_id);
-			//根据powerId跟新充电宝电量
-			mPower.setIsempty(1);
+			PowerService powerService = SpringContextUtil.getBean("PowerService");
+			M2Power mPower = new M2Power();
+			mPower.setcId(cId);
+			mPower.setmId(m_id);
+			mPower.setIsempty(0);
+			mPower.setUpdateTime(Long.toString(System.currentTimeMillis()));
+			mPower.setpLock(1);
 			mPower.setPowerId(powerId);
-			mPower.getPower().setpCount(pCount);
-			mPower.getPower().setpQuantity(pQuantity);
+			int s = m2PowerService.updateByM_IdAndC_id(mPower);
+			
+			Power power = new Power();
+			power.setIsBack(1);
+			power.setpCount(pCount);
+			power.setpQuantity(pQuantity);
+			power.setPowerId(powerId);
+			int ps = powerService.updateByPrimaryKey(power);
+			//根据powerId跟新充电宝电量
+//			mPower.setIsempty(1);
+//			mPower.setPowerId(powerId);
+//			mPower.getPower().setpCount(pCount);
+//			mPower.getPower().setpQuantity(pQuantity);
 			
 			//更新
-			int s = m2PowerService.updateByPrimaryKey(mPower);
+//			int s = m2PowerService.updateByM_IdAndC_id(mPower);
 			//mpower  关系表更新成功 
-			if(s == 1) {
+			if(s == 1 || ps ==1) {
 				//根据openId微信发送消息(归还成功消息)
 				String openId = order.getUserid();
 				String orderId = order.getOrderId();
 				//更新用余额 rentHours * 1 = RMB
 				UserService userService = SpringContextUtil.getBean("UserService");
-				User usr = userService.selectByPrimaryKey(openId);
-				int balance = usr.getBalance() - rentHours;
-				usr.setBalance(balance);
+				User usr = userService.find(openId);
+				int balance = usr.getBalance();
+				usr.setBalance(balance - rentHours);
 				int sucess = userService.updateByPrimaryKey(usr);
 				if(sucess == 1) {
 					//调用微信模板消息接口
 					
 					//回应app "ok"
 					builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
-					builder.setMsgInfo("lock sucess");
+					builder.setMsgInfo("return power sucess");
 				} else {
 					//回滚
 					mPower.setIsempty(0);
 					m2PowerService.updateByPowerId(powerId);
 					//更新失败 弹出充电宝 发送失败消息
-					builder.setMsgType(MessageType.MsgType.RETURN_BACK_OK);
-					builder.setMsgInfo("lock error");//机器弹出充电宝
+					builder.setMsgType(MessageType.MsgType.RETURN_BACK_ERROR);
+					builder.setCId(cId);
+					builder.setMsgInfo("return power error");//机器弹出充电宝
 				}
 			} else {
 				//更新失败 弹出充电宝 发送失败消息
@@ -504,6 +520,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 			m2Power.setcId(cabin.getCId());
 			m2Power.setPowerId(cabin.getPId());
 			m2Power.setpLock(cabin.getPLock());
+			m2Power.setIsempty(0);
 			//存储时间
 			m2Power.setUpdateTime(Long.toString(System.currentTimeMillis()));
 			m2PowerList.add(m2Power);
@@ -518,8 +535,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		
 		//充电宝power表里面更新数据
 		PowerService powerService = SpringContextUtil.getBean("PowerService");
-		m_result = powerService.updateByPowerList(powerList);
-		if(m_result == 1) {
+		m_result = powerService.insertByPowerList(powerList);
+		if(m_result != 0) {
 			//更新机器信息
 			M2PowerService m2PowerService = SpringContextUtil.getBean("M2PowerService");
 			m_result = m2PowerService.updateRecordByMidAndCid(m2PowerList);
@@ -528,7 +545,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		//回应机器app ok表示存储成功
 		//返回 ok
 		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
-		if(m_result == 1) {
+		if(m_result != 0) {
 			builder.setMsgType(MessageType.MsgType.INIT_BACK_OK);
 			builder.setMsgInfo("init data success");
 		} else {

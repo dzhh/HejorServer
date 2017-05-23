@@ -104,12 +104,21 @@
   
   <update id="updateByPowerList" parameterType="java.util.List">
      <foreach collection="list" item="item" index="index" open="" close="" separator=";"> 
-              update test 
+              update power 
                     <set>     
-                            p_quantity=#{item.pQuantity},
-                            p_count= #{item.pCount} 
+                            p_quantity = #{item.pQuantity,jdbcType=INTEGER},
+                            p_count = #{item.pCount,jdbcType=INTEGER}
                     </set>    
-              where power_id = #{item.powerId}     
+              where power_id = #{item.powerId,jdbcType=VARCHAR}     
       </foreach>         
 	</update>
+	<insert id="insertByPowerList" parameterType="java.util.List">
+       insert into power(power_id, p_quantity, p_count) values
+       <foreach collection="list" item="item" index="index"
+           separator=",">
+           (#{item.powerId},
+           #{item.pQuantity},
+           #{item.pCount} )
+       </foreach>
+	</insert>
 </mapper>

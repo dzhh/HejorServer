@@ -27,13 +27,13 @@
     from m_power
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByM_IdAndC_Id" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByM_IdAndC_Id" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from m_power
     where m_id = #{mId,jdbcType=VARCHAR} and c_id = #{cId,jdbcType=INTEGER}
   </select>
-    <select id="selectByM_Id" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByM_Id" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select m.id, m.m_id, m.c_id, m.power_id, m.isEmpty, m.p_lock, m.updateTime, p.power_id, p.is_enable, p.p_quantity, p.p_count, p.is_back, p.id, p.c_id 
    <!-- <include refid="Base_Column_List" /> -->
     from m_power m, power p
@@ -138,10 +138,9 @@
     update m_power
     set power_id = #{powerId,jdbcType=VARCHAR},
       isEmpty = #{isempty,jdbcType=INTEGER},
-      d_lock = #{dLock,jdbcType=INTEGER},
-      p_lock = #{pLock,jdbcType=INTEGER}
+      p_lock = #{pLock,jdbcType=INTEGER},
       updateTime = #{updateTime,jdbcType=VARCHAR}
-    where m_id = #{m_id,jdbcType=VARCHAR} and c_id = #{c_id,jdbcType=INTEGER}
+    where m_id = #{mId,jdbcType=VARCHAR} and c_id = #{cId,jdbcType=INTEGER}
   </update>
   
   <update id="updateByPowerId" parameterType="java.lang.String">
@@ -157,11 +156,10 @@
 		    <set>
 		     power_id = #{item.powerId,jdbcType=VARCHAR},
 		      isEmpty = #{item.isempty,jdbcType=INTEGER},
-		      d_lock = #{item.dLock,jdbcType=INTEGER},
-		      p_lock = #{item.pLock,jdbcType=INTEGER}
+		      p_lock = #{item.pLock,jdbcType=INTEGER},
 		      updateTime = #{item.updateTime,jdbcType=VARCHAR}
 		      </set> 
-		    where m_id = #{item.m_id,jdbcType=VARCHAR} and c_id = #{item.c_id,jdbcType=INTEGER}
+		    where m_id = #{item.mId,jdbcType=VARCHAR} and c_id = #{item.cId,jdbcType=INTEGER}
 		</foreach>  
   </update>
     

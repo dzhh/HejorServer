@@ -17,4 +17,6 @@ public interface PowerMapper {
 
     int updateByPrimaryKey(Power record);
     int updateByPowerList(List<Power> record);
+    int insertByPowerList(List<Power> record);
+
 }

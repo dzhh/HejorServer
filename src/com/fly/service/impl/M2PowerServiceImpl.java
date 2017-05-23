@@ -61,7 +61,8 @@ public class M2PowerServiceImpl implements M2PowerService {
 	@Override
 	public int updateByM_IdAndC_id(M2Power record) {
 		// TODO Auto-generated method stub
-		return 0;
+		int s = mapper.updateByM_IdAndC_id(record);
+		return s;
 	}
 	
 
@@ -91,7 +92,8 @@ public class M2PowerServiceImpl implements M2PowerService {
 
 	@Override
 	public int updateRecordByMidAndCid(List<M2Power> recordList) {
-		return mapper.updateRecordByMidAndCid(recordList);
+		int s = mapper.updateRecordByMidAndCid(recordList);
+		return s;
 	}
 
 	@Override

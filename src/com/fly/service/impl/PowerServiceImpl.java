@@ -59,4 +59,11 @@ public class PowerServiceImpl implements PowerService {
 		return s;
 	}
 
+	@Override
+	public int insertByPowerList(List<Power> record) {
+		// TODO Auto-generated method stub
+		int s = mapper.insertByPowerList(record);
+		return s;
+	}
+
 }
