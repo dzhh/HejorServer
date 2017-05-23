@@ -79,6 +79,24 @@ public final class MsgServer2Client {
      * <code>int32 c_id = 4;</code>
      */
     int getCId();
+
+    /**
+     * <pre>
+     *配置文件地址
+     * </pre>
+     *
+     * <code>string confingUrl = 5;</code>
+     */
+    java.lang.String getConfingUrl();
+    /**
+     * <pre>
+     *配置文件地址
+     * </pre>
+     *
+     * <code>string confingUrl = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getConfingUrlBytes();
   }
   /**
    * Protobuf type {@code Msg}
@@ -96,6 +114,7 @@ public final class MsgServer2Client {
       sessionID_ = "";
       msgInfo_ = "";
       cId_ = 0;
+      confingUrl_ = "";
     }
 
     @java.lang.Override
@@ -144,6 +163,12 @@ public final class MsgServer2Client {
             case 32: {
 
               cId_ = input.readInt32();
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              confingUrl_ = s;
               break;
             }
           }
@@ -290,6 +315,48 @@ public final class MsgServer2Client {
       return cId_;
     }
 
+    public static final int CONFINGURL_FIELD_NUMBER = 5;
+    private volatile java.lang.Object confingUrl_;
+    /**
+     * <pre>
+     *配置文件地址
+     * </pre>
+     *
+     * <code>string confingUrl = 5;</code>
+     */
+    public java.lang.String getConfingUrl() {
+      java.lang.Object ref = confingUrl_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        confingUrl_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *配置文件地址
+     * </pre>
+     *
+     * <code>string confingUrl = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getConfingUrlBytes() {
+      java.lang.Object ref = confingUrl_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        confingUrl_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -314,6 +381,9 @@ public final class MsgServer2Client {
       if (cId_ != 0) {
         output.writeInt32(4, cId_);
       }
+      if (!getConfingUrlBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, confingUrl_);
+      }
     }
 
     public int getSerializedSize() {
@@ -334,6 +404,9 @@ public final class MsgServer2Client {
       if (cId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, cId_);
+      }
+      if (!getConfingUrlBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, confingUrl_);
       }
       memoizedSize = size;
       return size;
@@ -358,6 +431,8 @@ public final class MsgServer2Client {
           .equals(other.getMsgInfo());
       result = result && (getCId()
           == other.getCId());
+      result = result && getConfingUrl()
+          .equals(other.getConfingUrl());
       return result;
     }
 
@@ -376,6 +451,8 @@ public final class MsgServer2Client {
       hash = (53 * hash) + getMsgInfo().hashCode();
       hash = (37 * hash) + C_ID_FIELD_NUMBER;
       hash = (53 * hash) + getCId();
+      hash = (37 * hash) + CONFINGURL_FIELD_NUMBER;
+      hash = (53 * hash) + getConfingUrl().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -513,6 +590,8 @@ public final class MsgServer2Client {
 
         cId_ = 0;
 
+        confingUrl_ = "";
+
         return this;
       }
 
@@ -539,6 +618,7 @@ public final class MsgServer2Client {
         result.sessionID_ = sessionID_;
         result.msgInfo_ = msgInfo_;
         result.cId_ = cId_;
+        result.confingUrl_ = confingUrl_;
         onBuilt();
         return result;
       }
@@ -593,6 +673,10 @@ public final class MsgServer2Client {
         }
         if (other.getCId() != 0) {
           setCId(other.getCId());
+        }
+        if (!other.getConfingUrl().isEmpty()) {
+          confingUrl_ = other.confingUrl_;
+          onChanged();
         }
         onChanged();
         return this;
@@ -899,6 +983,95 @@ public final class MsgServer2Client {
         onChanged();
         return this;
       }
+
+      private java.lang.Object confingUrl_ = "";
+      /**
+       * <pre>
+       *配置文件地址
+       * </pre>
+       *
+       * <code>string confingUrl = 5;</code>
+       */
+      public java.lang.String getConfingUrl() {
+        java.lang.Object ref = confingUrl_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          confingUrl_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *配置文件地址
+       * </pre>
+       *
+       * <code>string confingUrl = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getConfingUrlBytes() {
+        java.lang.Object ref = confingUrl_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          confingUrl_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *配置文件地址
+       * </pre>
+       *
+       * <code>string confingUrl = 5;</code>
+       */
+      public Builder setConfingUrl(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        confingUrl_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *配置文件地址
+       * </pre>
+       *
+       * <code>string confingUrl = 5;</code>
+       */
+      public Builder clearConfingUrl() {
+        
+        confingUrl_ = getDefaultInstance().getConfingUrl();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *配置文件地址
+       * </pre>
+       *
+       * <code>string confingUrl = 5;</code>
+       */
+      public Builder setConfingUrlBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        confingUrl_ = value;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -962,11 +1135,11 @@ public final class MsgServer2Client {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021msgserver2c.proto\032\021MessageType.proto\"R" +
+      "\n\021msgserver2c.proto\032\021MessageType.proto\"f" +
       "\n\003Msg\022\031\n\007msgType\030\001 \001(\0162\010.MsgType\022\021\n\tsess" +
       "ionID\030\002 \001(\t\022\017\n\007msgInfo\030\003 \001(\t\022\014\n\004c_id\030\004 \001" +
-      "(\005B0\n\034com.fly.netty.codec.protobufB\020MsgS" +
-      "erver2Clientb\006proto3"
+      "(\005\022\022\n\nconfingUrl\030\005 \001(\tB0\n\034com.fly.netty." +
+      "codec.protobufB\020MsgServer2Clientb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -986,7 +1159,7 @@ public final class MsgServer2Client {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new java.lang.String[] { "MsgType", "SessionID", "MsgInfo", "CId", });
+        new java.lang.String[] { "MsgType", "SessionID", "MsgInfo", "CId", "ConfingUrl", });
     com.fly.netty.codec.protobuf.MessageType.getDescriptor();
   }
 

@@ -480,6 +480,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 				MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
 				builder.setMsgType(MessageType.MsgType.AUTH_BACK_OK);
 				builder.setMsgInfo("认证成功");
+				builder.setConfingUrl("");
 				MsgServer2Client.Msg msgResp = builder.build();
 				ctx.writeAndFlush(msgResp);
 				//存储连接  存储机器状态   这个地方需要考虑下
