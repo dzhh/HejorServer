@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: zchong
-# Generation Time: 2017-05-16 16:23:29 +0000
+# Generation Time: 2017-05-23 10:18:44 +0000
 # ************************************************************
 
 
@@ -74,7 +74,7 @@ CREATE TABLE `m_power` (
   `power_id` varchar(32) DEFAULT '',
   `isEmpty` int(1) NOT NULL,
   `p_lock` int(1) NOT NULL,
-  `updateTime` varchar(32) NOT NULL DEFAULT '',
+  `updateTime` varchar(32) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `m_id` (`m_id`),
   CONSTRAINT `m_power_ibfk_1` FOREIGN KEY (`m_id`) REFERENCES `machine` (`m_id`)
@@ -85,12 +85,18 @@ LOCK TABLES `m_power` WRITE;
 
 INSERT INTO `m_power` (`id`, `m_id`, `c_id`, `power_id`, `isEmpty`, `p_lock`, `updateTime`)
 VALUES
-	(16,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',1,'2EwrcAGYnYTWGGTd',0,1,'1493629626'),
+	(16,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',1,'',0,1,'1493629626'),
 	(18,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,'kcf7HEBlSUHuZffZ',0,1,'1493629710'),
-	(19,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',3,'KwR2j6OZoI4TrscY',0,1,'1493629729'),
+	(19,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',3,'',0,1,'1493629729'),
 	(20,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',4,'oih1JCfb3KQ47eHy',0,1,'1493629745'),
 	(21,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',5,'y8sS8aaR3sYIobRW',0,1,'1493629763'),
-	(24,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',6,'',1,0,'');
+	(24,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',6,'KwR2j6OZoI4TrscY',0,1,'1495524532134'),
+	(25,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',1,'ywFNTa6EV8wV6TR4',0,1,'1495533460329'),
+	(26,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',2,'XAEC6cz0V59pApq7',0,1,'1495533460329'),
+	(27,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',3,'UIKxoOFQo1RH3VN3',0,1,'1495533460329'),
+	(28,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',4,'dZhyuCXvt2UmLvLE',0,1,'1495533460329'),
+	(29,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',5,'hlAj9o2MwJuRxVwZ',0,1,'1495533460329'),
+	(30,'sqcdJwlkKNCe6Sdt2hxqvPh0lsRglrog',6,'',0,1,'1495533460329');
 
 /*!40000 ALTER TABLE `m_power` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -153,7 +159,9 @@ LOCK TABLES `order_list` WRITE;
 
 INSERT INTO `order_list` (`order_id`, `c_id`, `power_id`, `userId`, `out_time`, `back_time`, `total_fee`, `order_state`, `is_change`, `m_id`, `id`, `isPay`)
 VALUES
-	('1493659527477152',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493659527477',NULL,0,0,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,0);
+	('1493659527477152',NULL,'2EwrcAGYnYTWGGTd','o5UR3xFIif1N2qtNNc4HHsYxMohg','1493659527477',NULL,0,1,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',2,1),
+	('149550445922190','3','KwR2j6OZoI4TrscY','o5UR3xFIif1N2qtNNc4HHsYxMohg','1495504474086',NULL,5,1,0,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',NULL,1),
+	('1495525758921579','4','oih1JCfb3KQ47eHy','o5UR3xFIif1N2qtNNc4HHsYxMohg','1495525758921',NULL,0,2,1,'1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV',NULL,1);
 
 /*!40000 ALTER TABLE `order_list` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -165,8 +173,19 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `pay_list`;
 
 CREATE TABLE `pay_list` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
+  `transaction_id` varchar(32) NOT NULL,
+  `userId` varchar(32) NOT NULL DEFAULT '',
+  `trade_type` varchar(11) NOT NULL,
+  `bank_type` varchar(11) NOT NULL DEFAULT '',
+  `total_fee` int(11) NOT NULL,
+  `settlement_total_fee` int(11) NOT NULL,
+  `cash_fee` int(11) NOT NULL,
+  `out_trade_no` varchar(32) NOT NULL DEFAULT '',
+  `time_end` varchar(14) NOT NULL DEFAULT '',
+  `result_code` varchar(16) DEFAULT NULL,
+  `pay_source` int(11) DEFAULT NULL,
+  `device_info` varchar(16) DEFAULT NULL,
+  PRIMARY KEY (`transaction_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -178,10 +197,10 @@ DROP TABLE IF EXISTS `power`;
 
 CREATE TABLE `power` (
   `power_id` varchar(32) NOT NULL DEFAULT '',
-  `is_enable` int(1) NOT NULL,
+  `is_enable` int(1) NOT NULL DEFAULT '0',
   `p_quantity` int(11) NOT NULL,
   `p_count` int(11) NOT NULL,
-  `is_back` int(1) NOT NULL,
+  `is_back` int(1) NOT NULL DEFAULT '0',
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `c_id` int(2) DEFAULT NULL,
   PRIMARY KEY (`power_id`),
@@ -193,12 +212,18 @@ LOCK TABLES `power` WRITE;
 
 INSERT INTO `power` (`power_id`, `is_enable`, `p_quantity`, `p_count`, `is_back`, `id`, `c_id`)
 VALUES
+	('',0,60,10,0,48,NULL),
 	('2EwrcAGYnYTWGGTd',1,45,10,1,3,1),
+	('dZhyuCXvt2UmLvLE',0,60,10,0,46,NULL),
 	('E6FTSlIBIGyxifGZ',1,50,3,0,6,NULL),
+	('hlAj9o2MwJuRxVwZ',0,60,10,0,47,NULL),
 	('kcf7HEBlSUHuZffZ',1,85,100,1,4,2),
 	('KwR2j6OZoI4TrscY',1,95,33,1,5,3),
 	('oih1JCfb3KQ47eHy',1,90,59,1,1,4),
-	('y8sS8aaR3sYIobRW',1,50,11,1,2,5);
+	('UIKxoOFQo1RH3VN3',0,60,10,0,45,NULL),
+	('XAEC6cz0V59pApq7',0,60,10,0,44,NULL),
+	('y8sS8aaR3sYIobRW',1,50,11,1,2,5),
+	('ywFNTa6EV8wV6TR4',0,60,10,0,43,NULL);
 
 /*!40000 ALTER TABLE `power` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -301,8 +326,8 @@ LOCK TABLES `user` WRITE;
 
 INSERT INTO `user` (`userId`, `origin`, `nickname`, `balance`, `sex`, `phone`, `zmxy`, `isChange`, `password`, `headimgurl`, `isBlack`, `creditScore`)
 VALUES
-	('o5UR3xEUrLw3uqh6XfYxmpRva3pA','','奇小怪',20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-	('o5UR3xFIif1N2qtNNc4HHsYxMohg','','C君',100,NULL,'',NULL,NULL,NULL,'http://wx.qlogo.cn/mmopen/hgXWbMaaqmDahBttlaYckrprYryu5e7TvbRMuJeXeHZiaIMsDyiafoP67z2wO7TCcmZCtq2Jgtt6DRn0S2W2KuQMwibEq8icHEQp/0',NULL,NULL);
+	('o5UR3xEUrLw3uqh6XfYxmpRva3pA','','奇小怪',80,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+	('o5UR3xFIif1N2qtNNc4HHsYxMohg','','C君',95,NULL,'',NULL,NULL,NULL,'http://wx.qlogo.cn/mmopen/hgXWbMaaqmDahBttlaYckrprYryu5e7TvbRMuJeXeHZiaIMsDyiafoP67z2wO7TCcmZCtq2Jgtt6DRn0S2W2KuQMwibEq8icHEQp/0',NULL,NULL);
 
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
