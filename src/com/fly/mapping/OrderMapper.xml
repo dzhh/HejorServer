@@ -3,7 +3,7 @@
 <mapper namespace="com.fly.mapping.OrderMapper" >
   <resultMap id="BaseResultMap" type="com.fly.model.Order" >
     <id column="order_id" property="orderId" jdbcType="VARCHAR" />
-    <result column="c_id" property="cId" jdbcType="VARCHAR" />
+    <result column="c_id" property="cId" jdbcType="INTEGER" />
     <result column="power_id" property="powerId" jdbcType="VARCHAR" />
     <result column="userId" property="userid" jdbcType="VARCHAR" />
     <result column="out_time" property="outTime" jdbcType="VARCHAR" />
@@ -61,7 +61,7 @@
       userId, out_time, back_time, 
       total_fee, order_state, is_change, 
       m_id, id, isPay)
-    values (#{orderId,jdbcType=VARCHAR}, #{cId,jdbcType=VARCHAR}, #{powerId,jdbcType=VARCHAR}, 
+    values (#{orderId,jdbcType=VARCHAR}, #{cId,jdbcType=INTEGER}, #{powerId,jdbcType=VARCHAR}, 
       #{userid,jdbcType=VARCHAR}, #{outTime,jdbcType=VARCHAR}, #{backTime,jdbcType=VARCHAR}, 
       #{totalFee,jdbcType=INTEGER}, #{orderState,jdbcType=INTEGER}, #{isChange,jdbcType=INTEGER}, 
       #{mId,jdbcType=VARCHAR}, #{id,jdbcType=INTEGER}, #{isPay,jdbcType=INTEGER})
@@ -111,7 +111,7 @@
         #{orderId,jdbcType=VARCHAR},
       </if>
       <if test="cId != null" >
-        #{cId,jdbcType=VARCHAR},
+        #{cId,jdbcType=INTEGER},
       </if>
       <if test="powerId != null" >
         #{powerId,jdbcType=VARCHAR},
@@ -149,7 +149,7 @@
     update order_list
     <set >
       <if test="cId != null" >
-        c_id = #{cId,jdbcType=VARCHAR},
+        c_id = #{cId,jdbcType=INTEGER},
       </if>
       <if test="powerId != null" >
         power_id = #{powerId,jdbcType=VARCHAR},
@@ -186,7 +186,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fly.model.Order" >
     update order_list
-    set c_id = #{cId,jdbcType=VARCHAR},
+    set c_id = #{cId,jdbcType=INTEGER},
       power_id = #{powerId,jdbcType=VARCHAR},
       userId = #{userid,jdbcType=VARCHAR},
       out_time = #{outTime,jdbcType=VARCHAR},

@@ -5,7 +5,7 @@ import java.util.Date;
 public class Order {
 
 	private String orderId;
-	private String cId;
+	private Integer cId;
 	private String powerId;
 	private String userid;
 	private String outTime;
@@ -25,12 +25,12 @@ public class Order {
 		this.orderId = orderId == null ? null : orderId.trim();
 	}
 
-	public String getcId() {
+	public Integer getcId() {
 		return cId;
 	}
 
-	public void setcId(String cId) {
-		this.cId = cId == null ? null : cId.trim();
+	public void setcId(Integer cId) {
+		this.cId = cId;
 	}
 
 	public String getPowerId() {

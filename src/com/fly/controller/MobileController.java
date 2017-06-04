@@ -1,7 +1,9 @@
 package com.fly.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +23,7 @@ import com.fly.common.redis.RedisUtil;
 import com.fly.model.M2Power;
 import com.fly.model.Machine;
 import com.fly.model.Order;
+import com.fly.model.Paylist;
 import com.fly.model.User;
 import com.fly.netty.codec.protobuf.MessageType;
 import com.fly.netty.codec.protobuf.MsgServer2Client;
@@ -28,6 +32,7 @@ import com.fly.service.M2PowerService;
 import com.fly.service.MachineService;
 import com.fly.service.NettyService;
 import com.fly.service.OrderService;
+import com.fly.service.PaylistService;
 import com.fly.service.UserService;
 import com.fly.util.AscPowerComparator;
 import com.fly.util.CommonUtil;
@@ -36,6 +41,7 @@ import com.fly.util.JsonUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import net.sf.json.JSONObject;
 
 
 /**
@@ -47,8 +53,6 @@ import io.netty.channel.ChannelFutureListener;
 @Controller
 public class MobileController {
 	
-	@Autowired
-	private MachineService machineService;
 	
 	@Autowired
 	private M2PowerService m2PowerService;
@@ -61,6 +65,9 @@ public class MobileController {
 	
 	@Autowired
 	private NettyService nettyService;
+	
+	@Autowired
+	private PaylistService payService;
 	
 	/**
 	 * 判断充电宝 租用
@@ -114,7 +121,19 @@ public class MobileController {
 			if(resp == 1){
 				//保存下orderid 和 powerid的关系
 				RedisUtil.putOrder(order.getPowerId(), order);
-				json = JsonUtil.beanToJson(order);
+				
+		    	Map<String, String> respMap = new HashMap<String, String>();
+	    		respMap.put("orderId", order.getOrderId());
+	    		
+	    		String outTime = order.getOutTime();
+	            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	            long lt = new Long(outTime);
+	            Date date = new Date(lt);
+	            outTime = simpleDateFormat.format(date);
+	            respMap.put("req", "1");
+	    		respMap.put("outTime", outTime);
+	    		respMap.put("powerId", order.getPowerId());
+	    		json = JsonUtil.beanToJson(respMap);
 			}
 		    return json;
 		    
@@ -218,28 +237,58 @@ public class MobileController {
 	 * @return
 	 */
 	
-	@RequestMapping(value="/mobile/paySuccess",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
+	@RequestMapping(value="/mobile/paySuccess",  method = RequestMethod.POST)
 	@ResponseBody
-	public String paySuccess( @RequestParam(value="openId") String openId, @RequestParam(value="fee") String fee){
+	public String paySuccess(@RequestBody String param){
 		//查找用户 增加余额
+		JSONObject jsStr = JSONObject.fromObject(param); 
+		String openId = jsStr.getString("userid");
+		Paylist pay = (Paylist)JSONObject.toBean(jsStr, Paylist.class);
 		User usr = usrService.find(openId);
+		//存储支付订单信息
+		int success = payService.insertSelective(pay);
 		if(usr != null){
-//			usr.setBalance(usr.getBalance() + Integer.valueOf(fee).intValue());
+			usr.setBalance(usr.getBalance() + pay.getTotalFee());
 			//更新用户余额
-
+			int usrUpdate = usrService.updateByPrimaryKey(usr);
 			//查找未付款订单
 			Order order = orderService.selectUnPayByUserId(openId);
-			order.setIsPay(1);
+//			order.setIsPay(1);
 			String m_id = order.getmId();
-			String c_id = order.getcId();
-			String powerId = order.getPowerId();
 			
 			//通知app，netty发送消息
-			
-			//存储支付订单信息
-			
+	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
+	    	msgReqbuilder.setMsgType(MessageType.MsgType.OPEN);
+	    	msgReqbuilder.setCId(order.getcId());
+	    	
+			//发送消息
+	    	ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if(future.isSuccess()) {
+						System.out.println("打开充电舱消息发送成功");
+						//处理记录等
+					
+					} else {
+						//发送失败 处理
+						System.out.println("打开充电舱消息发送失败");
+					}
+				}
+			};
+			//发送消息
+	    	nettyService.sendMsg(m_id, msgReqbuilder.build(), channelFutureListener);
 			//订单消息
-			String json = JsonUtil.beanToJson(order);
+	    	Map<String, String> respMap = new HashMap<String, String>();
+    		respMap.put("orderId", order.getOrderId());
+    		
+    		String outTime = order.getOutTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long lt = new Long(outTime);
+            Date date = new Date(lt);
+            outTime = simpleDateFormat.format(date);
+    		respMap.put("outTime", outTime);
+
+			String json = JsonUtil.beanToJson(respMap);
 			return json;
 		}else{
 			return "error";
@@ -318,9 +367,10 @@ public class MobileController {
 		order.setTotalFee(0);
 		order.setOrderState(2);
 		order.setIsPay(1);
-		order.setcId(Integer.toString(mpower.getcId()));
+		order.setcId(mpower.getcId());
 		return order;
 	}
+	
 	/**
 	 * 获取所有用户订单列表
 	 * @param request

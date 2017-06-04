@@ -345,7 +345,7 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		order.setTotalFee(0);
 		order.setOrderState(2);
 		order.setIsPay(0);
-		order.setcId(Integer.toString(mpower.getcId()));
+		order.setcId(mpower.getcId());
 		return order;
 	}
 	
