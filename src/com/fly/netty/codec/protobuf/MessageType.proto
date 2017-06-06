@@ -50,4 +50,7 @@ enum MsgType{
 	CHANGE_OPEN = 1015;//服务器发送更换开仓状态
 	CHANGE_OPEN_OK = 2015;//客户端返回更换开仓成功状态
 	CHANGE_OPEN_ERROR = 2016;//更换开舱状态失败
+	
+	PING = 1016;
+	PONG = 1017;
 }

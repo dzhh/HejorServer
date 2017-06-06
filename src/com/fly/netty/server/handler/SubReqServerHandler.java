@@ -28,6 +28,9 @@ import com.fly.util.SpringContextUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.ReferenceCountUtil;
 
 /**
  * 具体处理消息
@@ -36,7 +39,14 @@ import io.netty.channel.socket.SocketChannel;
  */
 
 public class SubReqServerHandler extends SimpleChannelInboundHandler { 
-
+	// 失败计数器：未收到client端发送的ping请求
+	private int unRecPingTimes = 0 ;
+	// 设置6秒检测chanel是否接受过心跳数据
+	private static final int READ_WAIT_SECONDS = 6;
+	
+	// 定义客户端没有收到服务端的pong消息的最大次数
+	private static final int MAX_UN_REC_PING_TIMES = 3;
+	
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     	closeConnect(ctx);
@@ -51,45 +61,141 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 		MsgClient2Server.Msg msgReq = (MsgClient2Server.Msg) msg;
 		// 消息类型
 		MessageType.MsgType msgType =  msgReq.getMsgType();
-		
-		if(msgType.equals(MessageType.MsgType.AUTH)) {//验证机器
+		unRecPingTimes = 0;
+		switch (msgType) {
+		case AUTH:
 			handleAuthMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.INIT)) {// 存储初始化 init
-			
+			break;
+		case INIT:
 			initMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_OK)) { //打开充电舱成功
-			
+
+			break;
+		case OPEN_BACK_OK:
 			openOkMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_ERROR)) { //打开充电舱失败
-			
+			break;
+		
+		case OPEN_BACK_ERROR:
 			openErrorMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.RETURN)) { //归还充电宝
-			
+			break;
+		
+		case RETURN:
 			returnPowerMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.HEAT)) {
+			break;
+		
+		case HEAT:
 			
-		} else if(msgType.equals(MessageType.MsgType.UPDATE)) {//机器自检更新
-			//1、更新数据库
+			break;
+			
+		case UPDATE:
 			updateMachineMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.ERROR)) {
+			break;
 			
-			errorMsg(ctx, msgReq);
-			//机器自检报错
-		}
-		else if(msgType.equals(MessageType.MsgType.CHANGE)){//更换充电宝
-			
+		case CHANGE:
 			changeMsg(ctx, msgReq);
-//			changeBackOkMsg(ctx, msgReq);
-		} 
-		else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_OK)){//更换充电宝弹出成功
+			break;
 			
+		case CHANGE_OPEN_OK:
 			changeBackOkMsg(ctx, msgReq);
-		} else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_ERROR)){//更换充电宝弹出失败
+			break;
 			
+		case CHANGE_OPEN_ERROR:
 			changeBackErrorMsg(ctx, msgReq);
+			break;
+		case ERROR:
+			errorMsg(ctx, msgReq);
+			break;
+			
+		case PING:
+			sendPongMsg(ctx, msgReq);
+		default:
+			break;
 		}
+		ReferenceCountUtil.release(msg);
+//		if(msgType.equals(MessageType.MsgType.AUTH)) {//验证机器
+//			handleAuthMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.INIT)) {// 存储初始化 init
+//			
+//			initMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_OK)) { //打开充电舱成功
+//			
+//			openOkMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.OPEN_BACK_ERROR)) { //打开充电舱失败
+//			
+//			openErrorMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.RETURN)) { //归还充电宝
+//			
+//			returnPowerMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.HEAT)) {
+//			
+//		} else if(msgType.equals(MessageType.MsgType.UPDATE)) {//机器自检更新
+//			//1、更新数据库
+//			updateMachineMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.ERROR)) {
+//			
+//			errorMsg(ctx, msgReq);
+//			//机器自检报错
+//		}
+//		else if(msgType.equals(MessageType.MsgType.CHANGE)){//更换充电宝
+//			
+//			changeMsg(ctx, msgReq);
+////			changeBackOkMsg(ctx, msgReq);
+//		} 
+//		else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_OK)){//更换充电宝弹出成功
+//			
+//			changeBackOkMsg(ctx, msgReq);
+//		} else if(msgType.equals(MessageType.MsgType.CHANGE_OPEN_ERROR)){//更换充电宝弹出失败
+//			
+//			changeBackErrorMsg(ctx, msgReq);
+//		}
+	}
+
+	@Override
+	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                /*读超时*/
+                System.out.println("===服务端===(READER_IDLE 读超时)");
+                // 失败计数器次数大于等于3次的时候，关闭链接，等待client重连
+                if(unRecPingTimes >= MAX_UN_REC_PING_TIMES){
+                	System.out.println("===服务端===(读超时，关闭chanel)");
+                	// 连续超过N次未收到client的ping消息，那么关闭该通道，等待client重连
+                	sendAuthMsg(ctx);
+                	ctx.channel().close();
+                }else{
+                	// 失败计数器加1
+                	unRecPingTimes++;
+                }
+            } else if (event.state() == IdleState.WRITER_IDLE) {
+                /*写超时*/   
+                System.out.println("===服务端===(WRITER_IDLE 写超时)");
+            } else if (event.state() == IdleState.ALL_IDLE) {
+                /*总超时*/
+                System.out.println("===服务端===(ALL_IDLE 总超时)");
+            }
+        }
 	}
 	
+	/**
+	 * 
+	 * @param ctx
+	 * @param msgReq
+	 */
+	private void sendPongMsg(ChannelHandlerContext ctx, Msg msgReq) {
+		//ping pong
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.PONG);
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+	}
+
+	private void sendAuthMsg(ChannelHandlerContext ctx) {
+		//ping pong
+		MsgServer2Client.Msg.Builder builder = MsgServer2Client.Msg.newBuilder();
+		builder.setMsgType(MessageType.MsgType.AUTH);
+		MsgServer2Client.Msg msgResp = builder.build();
+		ctx.writeAndFlush(msgResp);
+	}
 	/**
 	 * 
 	 * @param ctx
@@ -579,6 +685,8 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
     		System.out.println("close clientId = " + clientId + " conn = " + ctx.channel().toString());
     	}
     }
+    
+    
 	
 	
 }

@@ -1,5 +1,7 @@
 package com.fly.netty.server.channel;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLEngine;
 
 import com.fly.netty.codec.protobuf.MsgClient2Server;
@@ -19,11 +21,14 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInitializer<Channel> {
 
 	private String tlsMode = "CSA";
 //	private String tlsMode = "CA";
+	// 设置6秒检测chanel是否接受过心跳数据
+	private static final int READ_WAIT_SECONDS = 6;
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
@@ -54,8 +59,9 @@ public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInit
 	    pipeline.addLast(new ProtobufDecoder(MsgClient2Server.Msg.getDefaultInstance()));
 	    pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
 	    pipeline.addLast(new ProtobufEncoder());
-
-	    pipeline.addLast(new SubReqServerHandler());
+//	    pipeline.addLast(new SubReqServerHandler());
+	    pipeline.addLast("pong", new IdleStateHandler(READ_WAIT_SECONDS, 0, 0, TimeUnit.SECONDS));
+	    pipeline.addLast("handle", new SubReqServerHandler());
 	}
 
 }
