@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option java_package = "com.fly.netty.codec.protobuf";
-option java_outer_classname = "MsgClient2Server";
+option java_outer_classname = "PingMsg";
 import "MessageType.proto";
 
 message Cabin {
