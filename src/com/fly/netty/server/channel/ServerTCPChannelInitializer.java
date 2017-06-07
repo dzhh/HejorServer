@@ -28,7 +28,7 @@ public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInit
 	private String tlsMode = "CSA";
 //	private String tlsMode = "CA";
 	// 设置6秒检测chanel是否接受过心跳数据
-	private static final int READ_WAIT_SECONDS = 6;
+	private static final int READ_WAIT_SECONDS = 10;
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();

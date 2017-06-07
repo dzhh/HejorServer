@@ -41,8 +41,6 @@ import io.netty.util.ReferenceCountUtil;
 public class SubReqServerHandler extends SimpleChannelInboundHandler { 
 	// 失败计数器：未收到client端发送的ping请求
 	private int unRecPingTimes = 0 ;
-	// 设置6秒检测chanel是否接受过心跳数据
-	private static final int READ_WAIT_SECONDS = 6;
 	
 	// 定义客户端没有收到服务端的pong消息的最大次数
 	private static final int MAX_UN_REC_PING_TIMES = 3;
