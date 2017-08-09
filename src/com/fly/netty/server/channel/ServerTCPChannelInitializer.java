@@ -11,6 +11,7 @@ import com.fly.util.WebUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
@@ -28,7 +29,7 @@ public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInit
 	private String tlsMode = "CSA";
 //	private String tlsMode = "CA";
 	// 设置6秒检测chanel是否接受过心跳数据
-	private static final int READ_WAIT_SECONDS = 10;
+	private static final int READ_WAIT_SECONDS = 20;
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
@@ -51,15 +52,20 @@ public class ServerTCPChannelInitializer <C extends Channel> extends ChannelInit
 		engine.setUseClientMode(false);
 	    engine.setNeedClientAuth(true);
 		
-	    pipeline.addLast("ssl", new SslHandler(engine));
+//	    pipeline.addLast("ssl", new SslHandler(engine));
 
 		// 半包的处理
-	    pipeline.addLast(new ProtobufVarint32FrameDecoder());
-		// 需要解码的目标类
-	    pipeline.addLast(new ProtobufDecoder(MsgClient2Server.Msg.getDefaultInstance()));
-	    pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
-	    pipeline.addLast(new ProtobufEncoder());
+//	    pipeline.addLast(new ProtobufVarint32FrameDecoder());
+//		// 需要解码的目标类
+//	    pipeline.addLast(new ProtobufDecoder(MsgClient2Server.Msg.getDefaultInstance()));
+//	    pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+//	    pipeline.addLast(new ProtobufEncoder());
+	    
 //	    pipeline.addLast(new SubReqServerHandler());
+//	    pipeline.addLast(new LineBasedFrameDecoder(1024));
+	    pipeline.addLast("decoder",new StringDecoder());
+	    pipeline.addLast("encoder", new StringEncoder());
+	    
 	    pipeline.addLast("pong", new IdleStateHandler(READ_WAIT_SECONDS, 0, 0, TimeUnit.SECONDS));
 	    pipeline.addLast("handle", new SubReqServerHandler());
 	}

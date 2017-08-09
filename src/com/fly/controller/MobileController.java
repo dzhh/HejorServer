@@ -79,7 +79,11 @@ public class MobileController {
 	@RequestMapping(value="/mobile/rent",  method = {RequestMethod.GET, RequestMethod.POST},produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String getPowerSeril(@RequestParam(value="m_id") String mId, @RequestParam(value="openId") String userId){
-	    M2Power powerInfo = analyzeMachine(mId);
+//	    M2Power powerInfo = analyzeMachine(mId);
+		//测试用
+	    M2Power powerInfo = analyzeMachine("1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV");
+
+	    //测试 暂时屏蔽
 	    if(powerInfo == null) {
 	    	Map<String, String> map = new HashMap<String, String>();
 	    	map.put("req", "-1");
@@ -89,12 +93,12 @@ public class MobileController {
 	    }
 	    // 接着判断用户
 	    int userState = analyzeUser(userId);
-	    
-	    if(userState ==1 && powerInfo !=null){
+
+	    if(userState ==1 && powerInfo != null){
 	    	//通知机器app
 	    	MsgServer2Client.Msg.Builder msgReqbuilder = MsgServer2Client.Msg.newBuilder();
 	    	msgReqbuilder.setMsgType(MessageType.MsgType.OPEN);
-	    	msgReqbuilder.setCId(powerInfo.getcId());
+//	    	msgReqbuilder.setCId(powerInfo.getcId());
 	    	
 			//发送消息
 	    	ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
@@ -111,7 +115,7 @@ public class MobileController {
 				}
 			};
 			//发送消息
-	    	nettyService.sendMsg(mId, msgReqbuilder.build(), channelFutureListener);
+	    	nettyService.sendMsg("1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV", msgReqbuilder.build(), channelFutureListener);
 	    	
 			String json = "";			
 			//生成订单
@@ -429,18 +433,24 @@ public class MobileController {
 
 		//查询未结束租借订单，缴纳100元
 		List<Order> order = orderService.selectUnfinishedByUserId(userId);
-		if( order.size() > 0){
-			
-			return -1;
-	
+//		if( order.size() > 0){
+//			
+//			return -1;
+//	
+//		}else{
+//			//余额判断
+//			int balance = usr.getBalance();
+//			if(balance > 80){
+//				return 1;//发送消息到机器
+//			}else{
+//				return (100 - balance);
+//			}
+//		}
+		int balance = usr.getBalance();
+		if(balance > 80){
+			return 1;//发送消息到机器
 		}else{
-			//余额判断
-			int balance = usr.getBalance();
-			if(balance > 80){
-				return 1;//发送消息到机器
-			}else{
-				return (100 - balance);
-			}
+			return (100 - balance);
 		}
 	}
 	
@@ -452,7 +462,7 @@ public class MobileController {
 	 */
 	private M2Power analyzeMachine(String mId) {
 		M2Power mpower = null;
-		int mstate = 0;
+		int mstate = -1;
 		//1. 判断机器是否联网 根据nutty
 		Channel channel = NettyChannelMap.getSocketChannel(mId);
 		if(channel == null) {

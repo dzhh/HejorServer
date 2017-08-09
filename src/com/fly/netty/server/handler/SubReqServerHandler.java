@@ -1,5 +1,6 @@
 package com.fly.netty.server.handler;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,8 @@ import com.fly.util.AscPowerComparator;
 import com.fly.util.CommonUtil;
 import com.fly.util.SpringContextUtil;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
@@ -55,59 +58,66 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
 	 * 接受请求 处理请求
 	 */
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println(msg);
-		MsgClient2Server.Msg msgReq = (MsgClient2Server.Msg) msg;
-		// 消息类型
-		MessageType.MsgType msgType =  msgReq.getMsgType();
-		unRecPingTimes = 0;
-		switch (msgType) {
-		case AUTH:
-			handleAuthMsg(ctx, msgReq);
-			break;
-		case INIT:
-			initMsg(ctx, msgReq);
+		
+		String result = (String) msg;  
+		System.out.println("server receive:" + result + "__" + result.length());
 
-			break;
-		case OPEN_BACK_OK:
-			openOkMsg(ctx, msgReq);
-			break;
-		
-		case OPEN_BACK_ERROR:
-			openErrorMsg(ctx, msgReq);
-			break;
-		
-		case RETURN:
-			returnPowerMsg(ctx, msgReq);
-			break;
-		
-		case HEAT:
+		if(result.length() > 10){
 			
-			break;
-			
-		case UPDATE:
-			updateMachineMsg(ctx, msgReq);
-			break;
-			
-		case CHANGE:
-			changeMsg(ctx, msgReq);
-			break;
-			
-		case CHANGE_OPEN_OK:
-			changeBackOkMsg(ctx, msgReq);
-			break;
-			
-		case CHANGE_OPEN_ERROR:
-			changeBackErrorMsg(ctx, msgReq);
-			break;
-		case ERROR:
-			errorMsg(ctx, msgReq);
-			break;
-			
-		case PING:
-			sendPongMsg(ctx, msgReq);
-		default:
-			break;
+			NettyChannelMap.add("1CSb5BSoG5SaiNKQIgKnWBjKR8TkEVdV", (SocketChannel)ctx.channel());
 		}
+//		MsgClient2Server.Msg msgReq = (MsgClient2Server.Msg) msg;
+//		// 消息类型
+//		MessageType.MsgType msgType =  msgReq.getMsgType();
+//		unRecPingTimes = 0;
+//		switch (msgType) {
+//		case AUTH:
+//			handleAuthMsg(ctx, msgReq);
+//			break;
+//		case INIT:
+//			initMsg(ctx, msgReq);
+//
+//			break;
+//		case OPEN_BACK_OK:
+//			openOkMsg(ctx, msgReq);
+//			break;
+//		
+//		case OPEN_BACK_ERROR:
+//			openErrorMsg(ctx, msgReq);
+//			break;
+//		
+//		case RETURN:
+//			returnPowerMsg(ctx, msgReq);
+//			break;
+//		
+//		case HEAT:
+//			
+//			break;
+//			
+//		case UPDATE:
+//			updateMachineMsg(ctx, msgReq);
+//			break;
+//			
+//		case CHANGE:
+//			changeMsg(ctx, msgReq);
+//			break;
+//			
+//		case CHANGE_OPEN_OK:
+//			changeBackOkMsg(ctx, msgReq);
+//			break;
+//			
+//		case CHANGE_OPEN_ERROR:
+//			changeBackErrorMsg(ctx, msgReq);
+//			break;
+//		case ERROR:
+//			errorMsg(ctx, msgReq);
+//			break;
+//			
+//		case PING:
+//			sendPongMsg(ctx, msgReq);
+//		default:
+//			break;
+//		}
 		ReferenceCountUtil.release(msg);
 //		if(msgType.equals(MessageType.MsgType.AUTH)) {//验证机器
 //			handleAuthMsg(ctx, msgReq);
@@ -158,7 +168,6 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
                 if(unRecPingTimes >= MAX_UN_REC_PING_TIMES){
                 	System.out.println("===服务端===(读超时，关闭chanel)");
                 	// 连续超过N次未收到client的ping消息，那么关闭该通道，等待client重连
-                	sendAuthMsg(ctx);
                 	ctx.channel().close();
                 }else{
                 	// 失败计数器加1
@@ -684,7 +693,11 @@ public class SubReqServerHandler extends SimpleChannelInboundHandler {
     	}
     }
     
-    
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		System.out.println(ctx.channel().remoteAddress()+"   ----Acrive");
+//		ctx.writeAndFlush("client connected ok");
+	}
 	
 	
 }

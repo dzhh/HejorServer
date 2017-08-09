@@ -60,6 +60,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/netty-all-4.1.9.Final-sources.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/netty-all-4.1.9.Final.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/NuttyServer.jar" sourcepath="/NuttyServer"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-api-2.8.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/quartz-1.8.6.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/protobuf-java-3.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
